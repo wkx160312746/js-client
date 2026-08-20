@@ -61,6 +61,7 @@
 		"./js/handler/gameWatchEventHandler.js",
 		"./js/handler/gameWatchSuccessfulEventHandler.js"
 	]
+	handlerPath = handlerPath.map(path => path + "?v=20260820-zh");
 
 	WsClient.prototype.loadHandler = function () {
 		var loader = new HandlerLoader();
