@@ -51,6 +51,20 @@ Zeabur 会自动注入 `PORT`，容器会在启动时生成前端配置。修改
 
 注意：浏览器不能访问 Zeabur 的私有服务域名，`RATEL_WS_URL` 必须使用后端服务生成的公开域名。前端通过 HTTPS 访问时必须使用 `wss://`。
 
+#### 修改左侧网页
+
+编辑 `js/site-config.js` 即可更换左侧 iframe，无需修改业务脚本：
+
+```javascript
+window.SiteConfig = {
+    iframeUrl: "https://searchmysite.net/",
+    pageTitle: "SearchMySite",
+    favicon: ""
+};
+```
+
+目标网址必须使用 HTTPS，并允许第三方 iframe 嵌入；带有 `X-Frame-Options` 或 `frame-ancestors` 限制的网站无法显示。提交配置并重新部署后即可生效。
+
 ### Install
 
 #### 下载

@@ -4,19 +4,19 @@
     <title id='headTitle'></title>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width,initial-scale=1,user-scalable=no">
-    <link type="text/css" rel="stylesheet" href="css/client.css">
-    <link type="text/css" rel="stylesheet" href="css/console.css">
-    <link type="text/css" rel="stylesheet" href="css/mobile.css">
+    <link type="text/css" rel="stylesheet" href="css/client.css?v=20260820-layout">
+    <link type="text/css" rel="stylesheet" href="css/console.css?v=20260820-layout">
+    <link type="text/css" rel="stylesheet" href="css/mobile.css?v=20260820-layout">
     <link type="text/css" rel="stylesheet" href="css/poker-suits.css">
     <link rel="stylesheet" href="libs/font-awesome-4.7.0/css/font-awesome.min.css">
     <link type="image/x-icon" rel="shortcut icon" />
 </head>
 
 <body>
-    <iframe id="site" width="100%" height="100%" scrolling="no" frameborder="0" style="position: absolute;"></iframe>
+    <iframe id="site" title="背景网页"></iframe>
 
     <!--chrome console ui-->
-    <div id="console">
+    <div id="console" aria-hidden="false">
         <div class="tools">
             <div>
                 <div class="options">
@@ -48,7 +48,9 @@
                 <div class="options" style="float:right;font-size: 15px;color:#555">
                     <i class="fa fa-cog" aria-hidden="true"></i>
                     <i style="margin-left:8px" class="fa fa-ellipsis-v" aria-hidden="true"></i>
-                    <i style="margin-left:8px" class="fa fa-times" aria-hidden="true"></i>
+                    <button id="gamePanelClose" class="panel-icon-button" type="button" aria-label="收起游戏面板" title="收起游戏面板">
+                        <i class="fa fa-times" aria-hidden="true"></i>
+                    </button>
                 </div>
             </div>
         </div>
@@ -118,7 +120,12 @@
             </div>
         </div>
     </div>
+    <button id="gamePanelLauncher" type="button" aria-label="展开游戏面板" title="展开游戏面板" hidden>
+        <i class="fa fa-gamepad" aria-hidden="true"></i>
+        <span class="sr-only">展开游戏面板</span>
+    </button>
     <script type="text/javascript" src="js/config.js?v=20250710-1334"></script>
+    <script type="text/javascript" src="js/site-config.js?v=20260820-layout"></script>
     <script type="text/javascript" src="js/assets/protobuf.min.js"></script>
     <script type="text/javascript" src="js/enum.js?v=20250710-1334"></script>
 <script type="text/javascript" src="js/utils.js?v=20250710-1334"></script>
@@ -126,12 +133,12 @@
 <script type="text/javascript" src="js/protocol.js?v=20250710-1334"></script>
 <script type="text/javascript" src="js/handler/handler.js?v=20250710-1334"></script>
 <script type="text/javascript" src="js/eventWrapper.js?v=20250710-1334"></script>
-<script type="text/javascript" src="js/toggleable.js?v=20250710-1334"></script>
+<script type="text/javascript" src="js/toggleable.js?v=20260820-layout"></script>
 <script type="text/javascript" src="js/panel.js?v=20250710-1334"></script>
 <script type="text/javascript" src="js/wsClient.js?v=20250710-1334"></script>
 <script type="text/javascript" src="js/imClient.js?v=20250710-1334"></script>
-<script type="text/javascript" src="js/site.js?v=20260820-searchmysite"></script>
-<script type="text/javascript" src="js/responsive.js?v=20250710-1334"></script>
+<script type="text/javascript" src="js/site.js?v=20260820-layout"></script>
+<script type="text/javascript" src="js/responsive.js?v=20260820-layout"></script>
 <script type="text/javascript" src="js/init.js?v=20250710-1334"></script>
     <script>
         // 彩蛋功能：控制台命令触发

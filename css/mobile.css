@@ -1,47 +1,31 @@
-/*
- * @Author: Mr.Zhan YiDong
- * @Date: 2022-01-25 13:54:52
- * @Last Modified by: Mr.Zhan YiDong
- * @Last Modified time: 2022-01-26 09:51:29
- */
 .tools {
-  display: flex;
-  justify-content: space-between;
-  align-items: center
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
 }
 
-#console .tools {
-  height: auto;
-}
-
-#console .tools .options.icon_line {
-  padding: 0;
-}
-
-#console .tools .seting {
-  width: 30px;
-  align-self: flex-start;
+#console .tools > div,
+#console .tools .toolsList {
+    display: flex;
+    min-width: 0;
+    align-items: center;
 }
 
 #console .tools .toolsList {
-  width: 100%;
-  display: flex;
-  flex-wrap: wrap;
+    width: 100%;
+    flex-wrap: wrap;
 }
 
-#console .tools .options {
-  padding: 0 8px;
+#console .tools .options.icon_line {
+    padding: 0;
+}
+
+#console .tools .seting {
+    width: 30px;
+    flex: 0 0 30px;
+    align-self: flex-start;
 }
 
 #console .tools .options .split {
-  margin-left: 5px;
-}
-
-#contains {
-  width: calc(100% - 40px);
-  min-height: 1000px;
-}
-
-.inputBox {
-  display: flex;
+    margin-left: 5px;
 }

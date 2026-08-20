@@ -1,79 +1,136 @@
-html, body {
+:root {
+    --game-panel-width: clamp(520px, 34vw, 800px);
+}
+
+html,
+body {
+    width: 100%;
     height: 100%;
 }
 
-body {
-    margin: 0px;
-    padding: 0px;
-    overflow:hidden;
+* {
+    box-sizing: border-box;
 }
 
-div, input {
-    /* background: black;
-    color: white; */
+body {
+    margin: 0;
+    padding: 0;
+    overflow: hidden;
+}
+
+div,
+input,
+button {
     border: none;
     font-family: "PingFang SC", Helvetica, sans-serif, Arial;
     font-size: 12px;
+    letter-spacing: 0;
 }
 
-input:focus  {
+button,
+input:focus {
     outline: none;
 }
 
-#terminal {
-    position: absolute;
-    width: 960px;
-    height: 600px;
-    margin: 0;
-    padding-left: 20px;
-    padding-right: 20px;
-    padding-top: 10px;
-    font-family: Consolas;
-    font-size: 15px
+#site {
+    position: fixed;
+    inset: 0 var(--game-panel-width) 0 0;
+    width: calc(100vw - var(--game-panel-width));
+    height: 100dvh;
+    border: 0;
+    background: #fff;
+    transition: width 180ms ease, right 180ms ease;
 }
 
-#contains{
-    width: 1100px;
+#terminal {
+    position: relative;
+    width: 100%;
+    height: calc(100dvh - 82px);
+    margin: 0;
+    padding: 10px 20px 16px;
+    overflow: hidden;
+    font-family: Consolas, "SFMono-Regular", monospace;
+    font-size: 15px;
+}
+
+#bar {
+    min-height: 22px;
+    font-weight: 600;
+}
+
+#contains {
+    width: 100%;
+    height: calc(100% - 22px);
+    min-height: 0;
     overflow-y: auto;
-    word-wrap:break-word;
+    overflow-x: hidden;
+    word-wrap: break-word;
 }
 
 #content {
-    width: 1100px;
-    max-height: calc(100vh - 12vh);
+    width: 100%;
+    max-height: calc(100dvh - 170px);
     overflow-y: auto;
-    word-wrap:break-word;
+    overflow-x: hidden;
+    word-wrap: break-word;
 }
 
 #content::-webkit-scrollbar {
-    width: 10px;
-    height: 1px;
+    width: 8px;
+}
+
+.inputBox {
+    display: flex;
+    width: 100%;
+    min-height: 32px;
+    align-items: center;
 }
 
 #prefix {
-    float: left;
+    flex: 0 0 auto;
     height: 32px;
     line-height: 32px;
-    color:#2877d2;
-    padding-right:5px;
-    font-weight: bolder;
+    color: #2877d2;
+    padding-right: 5px;
+    font-weight: 700;
 }
 
 #input {
-    float: left;
-    height: 1.3em;
-    width: 421px;
+    flex: 1 1 auto;
+    width: auto;
+    min-width: 0;
+    height: 32px;
+    background: transparent;
 }
 
-/* Poker suit colors for old client */
 .poker-suit-red,
 span.poker-suit-red {
-    color: #FF0000 !important;
-    font-weight: bold;
+    color: #f00 !important;
+    font-weight: 700;
 }
 
 .poker-suit-green,
 span.poker-suit-green {
-    color: #00FF00 !important;
-    font-weight: bold;
+    color: #008f2d !important;
+    font-weight: 700;
+}
+
+@media (max-width: 960px) {
+    :root {
+        --game-panel-width: 100vw;
+    }
+
+    #site {
+        right: 0;
+        width: 100vw;
+    }
+
+    #terminal {
+        height: 100dvh;
+        padding: 42px 16px 12px;
+    }
+
+    #content {
+        max-height: calc(100dvh - 110px);
+    }
 }

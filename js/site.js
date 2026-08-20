@@ -10,31 +10,31 @@
     var iconPrefix = "./favicons/";
 
     Site.prototype.render = function () {
-        document.querySelector("#site").src = this.url;
-        document.querySelector("#headTitle").innerHTML = this.title;
+        var iframe = document.querySelector("#site");
+        iframe.src = this.url;
+        iframe.title = this.title;
+        document.querySelector("#headTitle").textContent = this.title;
         if (this.icon) {
             document.querySelector("link[rel*='icon']").href = iconPrefix + this.icon;
         }
     };
 
-    var siteMap = {
-        "searchmysite": { url: "https://searchmysite.net/", title: "SearchMySite", icon: "" },
-        "ts": { url: "https://www.typescriptlang.org/", title: "TypeScript: JavaScript With Syntax For Types.", icon: "favicon-ts.png" },
-        "bilibili": { url: "https://www.bilibili.com/", title: "哔哩哔哩 (゜-゜)つロ 干杯~-bilibili", icon: "favicon-bilibili.ico" }
-    };
-
-    var defaultSiteName = "searchmysite";
+    var config = window.SiteConfig || {};
+    var configuredSite = new Site({
+        url: config.iframeUrl || "about:blank",
+        title: config.pageTitle || "Ratel Online",
+        icon: config.favicon || ""
+    });
 
     document.getElementById("switchWebsite").addEventListener("keydown", function (event) {
-        if (event.keyCode === 13) {
-            if (this.value) {
-                event.preventDefault();
-                !this.value.startsWith('http://') && !this.value.startsWith('https://') && (this.value = 'https://' + this.value)
-                document.querySelector("#site").src = this.value;
+        if (event.keyCode === 13 && this.value) {
+            event.preventDefault();
+            if (!this.value.startsWith('http://') && !this.value.startsWith('https://')) {
+                this.value = 'https://' + this.value;
             }
+            document.querySelector("#site").src = this.value;
         }
-    })
+    });
 
-
-    window.defaultSite = new Site(siteMap[defaultSiteName]);
+    window.defaultSite = configuredSite;
 }(this));

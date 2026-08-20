@@ -1,52 +1,168 @@
-#terminal{background: none;  color: #000; width: 100%; }
-#terminal div {font-family:Consolas; line-height: 1.5em;}
-#terminal input{font-family:Consolas; line-height: 1em;}
-.texas-rules { color: #222; line-height: 1.7; padding: 4px 0 8px; }
-.texas-rules strong { font-size: 14px; }
-.texas-rules ol { margin: 4px 0 0; padding-left: 22px; }
-.texas-rules li { margin: 1px 0; }
-#console .tools{user-select: none; cursor: pointer;
-    width: 100%; height: 27px; border-bottom: 1px #ddd solid;background: rgba(240, 240, 240, 0.993);}
-#console .tools .options {line-height: 25px; color: #333; float: left; font-size: 11px; padding-left: 10px; padding-right: 10px;}
-#console .tools .options .split{height: 15px; margin-top:5px; border-right:1px #ccc solid; float: right}
-
-@media screen and (max-width: 800px) {
-    #console {width: 100%; height: 1000px; border: 1px #ddd solid; top: 0px; right: 0px; z-index: 999; overflow:hidden; position: fixed; background: rgba(253, 253, 253, 0.993); overflow: hidden;}
-    #console .tools{display: none;}
-    #content {
-        max-height: calc(100vh - 25vh);
-    }
-    #terminal{width: 100vw}
+#console {
+    position: fixed;
+    top: 0;
+    right: 0;
+    z-index: 999;
+    width: var(--game-panel-width);
+    height: 100dvh;
+    overflow: hidden;
+    border-left: 1px solid #ddd;
+    background: rgba(253, 253, 253, 0.993);
+    transition: transform 180ms ease, visibility 180ms ease;
 }
 
-/* @media screen and (min-width: 800px) {
-    #console {width: 800px; height: 1500px; border: 1px #ddd solid; top: 0px; right: 0px; z-index: 999; overflow:hidden; position: fixed; background: rgba(253, 253, 253, 0.993); overflow: hidden;}
-} */
+#terminal {
+    background: none;
+    color: #000;
+}
 
-/* 协议状态指示器 */
+#terminal div {
+    font-family: Consolas, "SFMono-Regular", monospace;
+    line-height: 1.5;
+}
+
+#terminal input {
+    font-family: Consolas, "SFMono-Regular", monospace;
+    line-height: 1;
+}
+
+.texas-rules {
+    color: #222;
+    line-height: 1.7;
+    padding: 4px 0 8px;
+}
+
+.texas-rules strong {
+    font-size: 14px;
+}
+
+.texas-rules ol {
+    margin: 4px 0 0;
+    padding-left: 22px;
+}
+
+.texas-rules li {
+    margin: 1px 0;
+}
+
+#console .tools {
+    width: 100%;
+    min-height: 27px;
+    border-bottom: 1px solid #ddd;
+    background: rgba(240, 240, 240, 0.993);
+    cursor: pointer;
+    user-select: none;
+}
+
+#console .tools .options {
+    min-height: 26px;
+    padding: 0 8px;
+    color: #333;
+    font-size: 11px;
+    line-height: 26px;
+}
+
+#console .tools .options .split {
+    float: right;
+    height: 15px;
+    margin-top: 5px;
+    border-right: 1px solid #ccc;
+}
+
+.panel-icon-button,
+#gamePanelLauncher {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    padding: 0;
+    border: 0;
+    color: #555;
+    background: transparent;
+    cursor: pointer;
+}
+
+.panel-icon-button {
+    width: 28px;
+    height: 26px;
+    margin-left: 2px;
+}
+
+.panel-icon-button:hover,
+.panel-icon-button:focus-visible {
+    color: #111;
+    background: #ddd;
+}
+
+#gamePanelLauncher {
+    position: fixed;
+    right: 16px;
+    bottom: 16px;
+    z-index: 1001;
+    width: 52px;
+    height: 52px;
+    border: 1px solid #c9cdd3;
+    border-radius: 6px;
+    color: #fff;
+    background: #2877d2;
+    box-shadow: 0 4px 14px rgba(0, 0, 0, 0.18);
+    font-size: 20px;
+}
+
+#gamePanelLauncher:hover,
+#gamePanelLauncher:focus-visible {
+    background: #2162ac;
+    box-shadow: 0 6px 18px rgba(0, 0, 0, 0.24);
+}
+
+#gamePanelLauncher[hidden] {
+    display: none;
+}
+
+body.game-panel-collapsed #console {
+    visibility: hidden;
+    pointer-events: none;
+    transform: translateX(100%);
+}
+
+body.game-panel-collapsed #site {
+    right: 0;
+    width: 100vw;
+}
+
+.sr-only {
+    position: absolute;
+    width: 1px;
+    height: 1px;
+    padding: 0;
+    margin: -1px;
+    overflow: hidden;
+    clip: rect(0, 0, 0, 0);
+    white-space: nowrap;
+    border: 0;
+}
+
 .protocol-status {
     position: fixed;
     top: 10px;
     right: 10px;
-    padding: 5px 10px;
-    border-radius: 20px;
-    font-size: 12px;
-    font-weight: bold;
     z-index: 1000;
-    box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+    padding: 5px 10px;
+    border-radius: 6px;
+    font-size: 12px;
+    font-weight: 700;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
 }
 
 .protocol-status.wss {
-    background-color: #28a745;
-    color: white;
+    color: #fff;
+    background: #218838;
 }
 
 .protocol-status.ws {
-    background-color: #ffc107;
     color: #212529;
+    background: #ffc107;
 }
 
-/* 连接信息框样式 */
 .connection-info {
     margin: 10px 0;
     padding: 8px 12px;
@@ -55,13 +171,74 @@
 }
 
 .connection-info.secure {
-    background-color: #d4edda;
-    border: 1px solid #c3e6cb;
     color: #155724;
+    border: 1px solid #c3e6cb;
+    background: #d4edda;
 }
 
 .connection-info.insecure {
-    background-color: #fff3cd;
-    border-color: #856404;
     color: #856404;
+    border: 1px solid #856404;
+    background: #fff3cd;
+}
+
+@media (max-width: 1440px) and (min-width: 961px) {
+    #console .toolMobile {
+        display: none;
+    }
+}
+
+@media (max-width: 960px) {
+    #console {
+        width: 100vw;
+        border-left: 0;
+    }
+
+    #console .tools {
+        display: none;
+    }
+
+    #console .tools:first-child {
+        position: absolute;
+        top: 6px;
+        right: 6px;
+        z-index: 2;
+        display: flex;
+        width: auto;
+        min-height: 32px;
+        border: 0;
+        background: transparent;
+    }
+
+    #console .tools:first-child > div:first-child,
+    #console .tools:first-child > div:last-child > .options {
+        display: none;
+    }
+
+    #console .tools:first-child > div:last-child,
+    #console .tools:first-child > div:last-child > .options:last-child {
+        display: flex;
+        min-height: 32px;
+        padding: 0;
+        align-items: center;
+    }
+
+    #console .tools:first-child .fa-cog,
+    #console .tools:first-child .fa-ellipsis-v {
+        display: none;
+    }
+
+    #console .tools:first-child .panel-icon-button {
+        width: 32px;
+        height: 32px;
+        border-radius: 4px;
+        background: #eee;
+    }
+
+    #gamePanelLauncher {
+        right: 12px;
+        bottom: 12px;
+        width: 48px;
+        height: 48px;
+    }
 }

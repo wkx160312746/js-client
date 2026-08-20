@@ -38,10 +38,18 @@
     };
 
     Toggleable.prototype.hide = function () {
+        if (this.targetEl.id === "console" && window.GamePanelLayout) {
+            window.GamePanelLayout.collapse();
+            return;
+        }
         this.targetEl.style.visibility = "hidden";
     };
 
     Toggleable.prototype.show = function () {
+        if (this.targetEl.id === "console" && window.GamePanelLayout) {
+            window.GamePanelLayout.expand();
+            return;
+        }
         this.targetEl.style.visibility = "visible";
         var inputEl = this.targetEl.querySelector("input");
         if (inputEl) {
