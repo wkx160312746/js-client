@@ -7,11 +7,11 @@
 
     Utils.extend(ShowOptionsPveEventHandler, Handler);
 
-    var tips = "PVE: \n" +
-            "1. Easy Mode \n" +
-            "2. Medium Mode\n" +
-            "3. Hard Mode\n" +
-            "Please select an option above (enter [back|b] to return to options list)";
+    var tips = "人机对战：\n" +
+            "1. 简单模式\n" +
+            "2. 普通模式\n" +
+            "3. 困难模式\n" +
+            "请选择以上选项（输入 back/b 返回上一级）";
 
     ShowOptionsPveEventHandler.prototype.handle = function(client, panel, clientTransferData) {
         panel.append(tips);
@@ -32,14 +32,14 @@
                 throw new Error(s + " is not a number.")
             }
         } catch (e) {
-            panel.append("Invalid option, please choose again：");
+            panel.append("选项无效，请重新选择：");
             panel.waitInput().then((s) => inputResolve(client, panel, s));
         }
 
         if (i < 4 && i > 0) {
             client.send(ServerEventCodes.CODE_ROOM_CREATE_PVE, s);
         } else {
-            panel.append("Invalid option, please choose again：");
+            panel.append("选项无效，请重新选择：");
             panel.waitInput().then((s) => inputResolve(client, panel, s));
         }
     }

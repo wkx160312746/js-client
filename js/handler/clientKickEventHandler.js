@@ -8,7 +8,7 @@
     Utils.extend(ClientKickEventHandler, Handler);
 
     ClientKickEventHandler.prototype.handle = function(client, panel, clientTransferData) {
-        panel.append("You have been kicked from the room for being idle.\n");
+        panel.append("你因长时间未操作已被移出房间。\n");
         client.dispatch({code: ClientEventCodes.CODE_SHOW_OPTIONS, data: null, info: null});
     };
 

@@ -8,10 +8,10 @@
     Utils.extend(GamePokerPlayInvalidEventHandler, Handler);
 
     GamePokerPlayInvalidEventHandler.prototype.handle = function(client, panel, clientTransferData) {
-        panel.append("This combination is invalid.");
+        panel.append("该牌型无效。");
 
         if (client.getLastPokers() != null) {
-            panel.append(Utils.format("{}[{}] played: ", client.getLastSellClientNickname(), client.getLastSellClientType()));
+            panel.append(Utils.format("{}[{}] 打出：", client.getLastSellClientNickname(), Utils.translateDisplayValue(client.getLastSellClientType())));
             panel.append(Poker.toString(client.getLastPokers()));
         }
 

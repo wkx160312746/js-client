@@ -8,7 +8,7 @@
     Utils.extend(RoomPlayFailByInexist1EventHandler, Handler);
 
     RoomPlayFailByInexist1EventHandler.prototype.handle = function(client, panel, clientTransferData) {
-        panel.append("Play failed. Room already disbanded!");
+        panel.append("操作失败，房间已经解散。");
         client.dispatch({code: ClientEventCodes.CODE_SHOW_OPTIONS, data: null, info: null});
     };
 

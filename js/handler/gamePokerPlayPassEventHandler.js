@@ -10,7 +10,7 @@
     GamePokerPlayPassEventHandler.prototype.handle = function(client, panel, clientTransferData) {
         var obj = JSON.parse(clientTransferData.data);
 
-        panel.append(Utils.format("{} passed. It is now {}'s turn.", obj.clientNickname, obj.nextClientNickname));
+        panel.append(Utils.format("{} 选择不出，下一位是 {}。", obj.clientNickname, obj.nextClientNickname));
         if(obj.nextClientId == client.getClientId()) {
             client.send(ServerEventCodes.CODE_GAME_POKER_PLAY_REDIRECT, null, null);
         }

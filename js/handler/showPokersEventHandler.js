@@ -14,11 +14,11 @@
         client.setLastSellClientType(obj.clientType);
         client.setLastSellClientNickname(obj.clientNickname);
 
-        panel.append(obj.clientNickname + "[" + obj.clientType + "] played:");
+        panel.append(obj.clientNickname + "[" + Utils.translateDisplayValue(obj.clientType) + "] 打出：");
         panel.append(Poker.toString(obj.pokers));
 
         if ("sellClinetNickname" in obj) {
-            panel.append("Next player is " + obj.sellClinetNickname + ". Please wait for him to play his combination.");
+            panel.append("下一位是 " + obj.sellClinetNickname + "，请等待对方出牌。");
         }
     };
 

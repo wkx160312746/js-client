@@ -148,6 +148,27 @@
 		}
 	}
 
+	function translateDisplayValue(value) {
+		if (typeof value !== 'string') {
+			return value;
+		}
+
+		var translations = {
+			"owner": "房主",
+			"player": "玩家",
+			"spectator": "观战者",
+			"landlord": "地主",
+			"peasant": "农民",
+			"waiting": "等待中",
+			"running": "游戏中",
+			"active": "行动中",
+			"folded": "已弃牌",
+			"all in": "全下",
+			"allin": "全下"
+		};
+		return translations[value.toLowerCase()] || value;
+	}
+
 	var timeoutPromise = (timeoutMillis) => {
 		return new Promise((resolve, reject) => {
 			var num = setTimeout(() => {
@@ -166,6 +187,7 @@
 		"HandlerLoader": HandlerLoader,
 		"extend": extend,
 		"isEmpty": isEmpty,
+		"translateDisplayValue": translateDisplayValue,
 		"format": format,
 		"timeout": timeout
 	};

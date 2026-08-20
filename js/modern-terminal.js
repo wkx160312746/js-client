@@ -27,31 +27,31 @@
   // Available commands
   const commands = {
     help: {
-      description: 'Show available commands',
+      description: '显示可用命令',
       execute: showHelp
     },
     clear: {
-      description: 'Clear terminal output',
+      description: '清空终端输出',
       execute: clearTerminal
     },
     join: {
-      description: 'Join a room (usage: join or 1)',
+      description: '加入房间（用法：join 或 1）',
       execute: joinRoom
     },
     new: {
-      description: 'Create a new room (usage: new or 2)',
+      description: '创建房间（用法：new 或 2）',
       execute: createRoom
     },
     rooms: {
-      description: 'Show available rooms',
+      description: '显示可加入的房间',
       execute: showRooms
     },
     exit: {
-      description: 'Exit current room or disconnect',
+      description: '退出当前房间或断开连接',
       execute: exitCommand
     },
     status: {
-      description: 'Show connection status',
+      description: '显示连接状态',
       execute: showStatus
     }
   };
@@ -90,7 +90,7 @@
     const closeBtn = document.querySelector('.control.close');
     if (closeBtn) {
       closeBtn.addEventListener('click', () => {
-        if (confirm('Are you sure you want to exit?')) {
+        if (confirm('确定要退出游戏终端吗？')) {
           window.location.href = 'index.html';
         }
       });
@@ -120,8 +120,8 @@
     }
 
     // Add initial output
-    addOutput('Welcome to Ratel Online Terminal v2.0', 'success');
-    addOutput('Please enter your nickname to continue...', 'info');
+    addOutput('欢迎使用 Ratel Online 游戏终端 v2.0', 'success');
+    addOutput('请输入昵称以继续...', 'info');
   }
 
   // Handle nickname input
@@ -132,7 +132,7 @@
         terminalState.nickname = nickname;
         connectWebSocket(nickname);
       } else {
-        addOutput('Error: Nickname cannot be empty', 'error');
+        addOutput('错误：昵称不能为空。', 'error');
       }
     }
   }
@@ -217,8 +217,8 @@
 
   // Connect WebSocket
   function connectWebSocket(nickname) {
-    addOutput(`Connecting as ${nickname}...`, 'info');
-    updateConnectionStatus('connecting', 'Connecting...');
+    addOutput(`正在以 ${nickname} 的身份连接...`, 'info');
+    updateConnectionStatus('connecting', '连接中...');
 
     // 重要：在创建 WebSocket 连接之前设置 window.name
     window.name = nickname;
@@ -242,8 +242,8 @@
 
     // 确保 WsClient 已加载
     if (typeof window.WsClient === 'undefined') {
-      addOutput('Error: WebSocket client library not loaded!', 'error');
-      addOutput('Please check if all required scripts are loaded.', 'error');
+      addOutput('错误：WebSocket 客户端组件未加载！', 'error');
+      addOutput('请检查页面所需脚本是否已全部加载。', 'error');
       throw new Error('WsClient is not defined');
     }
 
@@ -269,8 +269,8 @@
         throw new Error('Panel initialization failed');
       }
     } catch (error) {
-      addOutput('Error creating WebSocket client: ' + error.message, 'error');
-      addOutput('This might be due to missing dependencies or DOM elements.', 'error');
+      addOutput('创建 WebSocket 客户端失败：' + error.message, 'error');
+      addOutput('可能缺少依赖或页面元素。', 'error');
 
       // 允许用户重试
       elements.nicknameContainer.style.display = 'flex';
@@ -293,7 +293,7 @@
         // Skip empty messages
         if (cleanMessage.trim()) {
           // 检查消息中是否包含房间列表信息
-          const roomDataPattern = /(\d+)\s+([\u4e00-\u9fa5\w-]+)\s+(\d+)\s+(Waiting|Running|Full)/g;
+          const roomDataPattern = /(\d+)\s+([\u4e00-\u9fa5\w-]+)\s+(\d+)\s+(等待中|游戏中|已满|Waiting|Running|Full)/g;
           const roomMatches = [...cleanMessage.matchAll(roomDataPattern)];
 
           if (roomMatches.length > 0) {
@@ -324,7 +324,7 @@
                 }
               }, 300);
             }
-          } else if (cleanMessage.includes('Room invalid') && terminalState.waitingForRoomModal) {
+          } else if ((cleanMessage.includes('房间不存在') || cleanMessage.includes('Room invalid')) && terminalState.waitingForRoomModal) {
             // 如果收到 "Room invalid" 且没有房间数据，可能表示没有可用房间
             setTimeout(() => {
               if (terminalState.waitingForRoomModal && terminalState.availableRooms.length === 0) {
@@ -338,7 +338,7 @@
           // 检查是否在房间创建流程中
           if (terminalState.roomCreationState) {
             // 检查是否是主选项菜单 (Options: 1. PvP 2. PvE 3. Settings)
-            if (cleanMessage.includes('Options:') && cleanMessage.includes('1. PvP')) {
+            if ((cleanMessage.includes('选项：') && cleanMessage.includes('1. 玩家对战')) || (cleanMessage.includes('Options:') && cleanMessage.includes('1. PvP'))) {
               terminalState.roomCreationState = 'selecting_mode';
               // 自动选择 PvP
               setTimeout(() => {
@@ -347,7 +347,7 @@
               return;
             }
             // 检查是否是PvP选项菜单 (PVP: 1. Create Room 2. Room List...)
-            else if (cleanMessage.includes('PVP:') && cleanMessage.includes('1. Create Room')) {
+            else if ((cleanMessage.includes('玩家对战：') && cleanMessage.includes('1. 创建房间')) || (cleanMessage.includes('PVP:') && cleanMessage.includes('1. Create Room'))) {
               terminalState.roomCreationState = 'selecting_pvp_option';
               // 自动选择 Create Room
               setTimeout(() => {
@@ -356,7 +356,7 @@
               return;
             }
             // 检查是否是游戏类型选择 (Please select game type)
-            else if (cleanMessage.includes('Please select game type')) {
+            else if (cleanMessage.includes('请选择游戏类型') || cleanMessage.includes('Please select game type')) {
               terminalState.roomCreationState = 'selecting_game_type';
               terminalState.waitingForGameType = true;
               // 显示游戏类型选择模态框
@@ -366,10 +366,10 @@
               return;
             }
             // 检查是否收到 "Game type invalid" 错误
-            else if (cleanMessage.includes('Game type invalid')) {
+            else if (cleanMessage.includes('游戏类型无效') || cleanMessage.includes('Game type invalid')) {
               // 如果在等待游戏类型选择，重新显示选择框
               if (terminalState.waitingForGameType) {
-                addOutput('Invalid game type. Please select again.', 'error');
+                addOutput('游戏类型无效，请重新选择。', 'error');
                 setTimeout(() => {
                   showGameTypeModal();
                 }, 500);
@@ -390,30 +390,30 @@
             let messageType = 'info';
 
             // 游戏状态
-            if (line.includes('Game starting!')) {
+            if (line.includes('游戏开始！') || line.includes('Game starting!')) {
               messageType = 'success';
               // 游戏开始，重置回合信息
               terminalState.currentRound = 'Pre-flop';
             }
             // 手牌信息
-            else if (line.includes('Your hand:')) {
+            else if (line.includes('你的手牌：') || line.includes('Your hand:')) {
               messageType = 'warning';
               // 高亮显示手牌
               line = line.replace(/([♠♥♦♣]\w+)/g, '[$1]');
             }
             // 公共牌
-            else if (line.includes('Board:') || line.includes('board:')) {
+            else if (line.includes('公共牌：') || line.includes('Board:') || line.includes('board:')) {
               messageType = 'info';
               line = line.replace(/([♠♥♦♣]\w+)/g, '[$1]');
             }
             // 获胜信息
-            else if (line.includes('Winner:')) {
+            else if (line.includes('获胜者：') || line.includes('赢得本局') || line.includes('Winner:')) {
               messageType = 'success';
               // 游戏结束，停止倒计时
               stopCountdown();
             }
             // 行动提示
-            else if (line.includes('What do you want to do?')) {
+            else if (line.includes('请选择操作') || line.includes('What do you want to do?')) {
               messageType = 'prompt';
               // 开始倒计时
               startCountdown(60);
@@ -422,30 +422,30 @@
             else if (line.startsWith('>>')) {
               messageType = 'game-action';
               // 如果是其他玩家的行动，停止倒计时
-              if (!line.includes('turn to bet') && terminalState.isMyTurn) {
+              if (!line.includes('轮到') && !line.includes('turn to bet') && terminalState.isMyTurn) {
                 stopCountdown();
               }
             }
             // 金额信息
-            else if (line.includes('amount')) {
+            else if (line.includes('剩余积分：') || line.includes('累计下注：') || line.includes('amount')) {
               messageType = 'game-info';
             }
             // 回合信息
-            else if (line.includes('round')) {
+            else if (line.includes('回合') || line.includes('round')) {
               messageType = 'warning';
               // 识别当前回合阶段
-              if (line.includes('Pre-flop round')) {
+              if (line.includes('翻牌前回合') || line.includes('Pre-flop round')) {
                 terminalState.currentRound = 'Pre-flop';
-              } else if (line.includes('Flop round')) {
+              } else if (line.includes('翻牌回合') || line.includes('Flop round')) {
                 terminalState.currentRound = 'Flop';
-              } else if (line.includes('Turn round')) {
+              } else if (line.includes('转牌回合') || line.includes('Turn round')) {
                 terminalState.currentRound = 'Turn';
-              } else if (line.includes('River round')) {
+              } else if (line.includes('河牌回合') || line.includes('River round')) {
                 terminalState.currentRound = 'River';
               }
             }
             // 盲注信息
-            else if (line.includes('blind')) {
+            else if (line.includes('大盲') || line.includes('小盲') || line.includes('blind')) {
               messageType = 'game-info';
             }
 
@@ -488,8 +488,8 @@
       else if (serverTransferData.code === window.ClientEventCodes.CODE_ROOM_CREATE_SUCCESS) {
         try {
           const roomData = JSON.parse(serverTransferData.data);
-          addOutput(`Room created successfully! Room ID: ${roomData.id}`, 'success');
-          terminalState.currentRoom = `Room #${roomData.id}`;
+          addOutput(`房间创建成功！房间 ID：${roomData.id}`, 'success');
+          terminalState.currentRoom = `房间 #${roomData.id}`;
         } catch (e) {
           console.error('Failed to parse room creation data:', e);
         }
@@ -501,11 +501,11 @@
     // Initialize WebSocket connection
     terminalState.wsClient.init().then(() => {
       terminalState.connected = true;
-      updateConnectionStatus('connected', 'Connected');
-      addOutput('Successfully connected to server!', 'success');
-      addOutput('Type "help" to see available commands or:', 'info');
-      addOutput('  1. Join - Join an existing room', 'info');
-      addOutput('  2. New  - Create a new room', 'info');
+      updateConnectionStatus('connected', '已连接');
+      addOutput('已成功连接服务器！', 'success');
+      addOutput('输入 help 查看可用命令，也可以直接输入：', 'info');
+      addOutput('  1. join - 加入已有房间', 'info');
+      addOutput('  2. new  - 创建新房间', 'info');
 
       // Set nickname - window.name 已经在连接前设置
       terminalState.wsClient.setUserName(nickname);
@@ -521,9 +521,9 @@
       }
     }).catch((error) => {
       terminalState.connected = false;
-      updateConnectionStatus('disconnected', 'Disconnected');
-      addOutput('Failed to connect to server!', 'error');
-      addOutput('Error: ' + error.message, 'error');
+      updateConnectionStatus('disconnected', '未连接');
+      addOutput('连接服务器失败！', 'error');
+      addOutput('错误：' + error.message, 'error');
 
       // Allow retry
       elements.nicknameContainer.style.display = 'flex';
@@ -540,14 +540,14 @@
 
   // Command functions
   function showHelp() {
-    addOutput('Available commands:', 'info');
+    addOutput('可用命令：', 'info');
     for (const [cmd, info] of Object.entries(commands)) {
       addOutput(`  ${cmd.padEnd(10)} - ${info.description}`, 'info');
     }
-    addOutput('\nShortcuts:', 'info');
-    addOutput('  1          - Join a room', 'info');
-    addOutput('  2          - Create a new room', 'info');
-    addOutput('  5          - Auto join Texas Hold\'em room', 'info');
+    addOutput('\n快捷输入：', 'info');
+    addOutput('  1          - 加入房间', 'info');
+    addOutput('  2          - 创建房间', 'info');
+    addOutput('  5          - 创建德州扑克房间', 'info');
   }
 
   function clearTerminal() {
@@ -560,12 +560,12 @@
 
   function joinRoom() {
     if (!terminalState.connected) {
-      addOutput('Error: Not connected to server', 'error');
+      addOutput('错误：尚未连接服务器。', 'error');
       return;
     }
 
     // 发送 "1" 命令来获取房间列表
-    addOutput('Fetching available rooms...', 'info');
+    addOutput('正在获取可加入的房间...', 'info');
     terminalState.availableRooms = []; // 清空之前的房间列表
     terminalState.waitingForRoomModal = true; // 标记正在等待房间数据
     terminalState.wsClient.sendMsg("1"); // 使用 sendMsg 发送原始消息
@@ -581,11 +581,11 @@
 
   function createRoom() {
     if (!terminalState.connected) {
-      addOutput('Error: Not connected to server', 'error');
+      addOutput('错误：尚未连接服务器。', 'error');
       return;
     }
 
-    addOutput('Creating new room...', 'info');
+    addOutput('正在创建新房间...', 'info');
     // Set room creation state
     terminalState.roomCreationState = 'starting';
     // Send "2" to server to start the room creation flow
@@ -595,25 +595,25 @@
 
   function showRooms() {
     if (!terminalState.connected) {
-      addOutput('Error: Not connected to server', 'error');
+      addOutput('错误：尚未连接服务器。', 'error');
       return;
     }
 
-    addOutput('Fetching room list...', 'info');
+    addOutput('正在获取房间列表...', 'info');
     terminalState.wsClient.send(window.ClientEventCodes.CODE_SHOW_ROOMS);
   }
 
   function exitCommand() {
     if (terminalState.currentRoom) {
-      addOutput('Exiting current room...', 'info');
+      addOutput('正在退出当前房间...', 'info');
       // Send exit room command
       terminalState.wsClient.send(window.ClientEventCodes.CODE_CLIENT_EXIT);
       terminalState.currentRoom = null;
     } else if (terminalState.connected) {
-      addOutput('Disconnecting from server...', 'info');
+      addOutput('正在断开服务器连接...', 'info');
       terminalState.wsClient.close();
       terminalState.connected = false;
-      updateConnectionStatus('disconnected', 'Disconnected');
+      updateConnectionStatus('disconnected', '未连接');
 
       // Show nickname input again
       elements.nicknameContainer.style.display = 'flex';
@@ -621,15 +621,15 @@
       elements.nicknameInput.value = '';
       elements.nicknameInput.focus();
     } else {
-      addOutput('Not connected to any server', 'warning');
+      addOutput('当前未连接任何服务器。', 'warning');
     }
   }
 
   function showStatus() {
-    addOutput('=== Connection Status ===', 'info');
-    addOutput(`Connected: ${terminalState.connected ? 'Yes' : 'No'}`, terminalState.connected ? 'success' : 'error');
-    addOutput(`Nickname: ${terminalState.nickname || 'Not set'}`, 'info');
-    addOutput(`Current Room: ${terminalState.currentRoom || 'None'}`, 'info');
+    addOutput('=== 连接状态 ===', 'info');
+    addOutput(`已连接：${terminalState.connected ? '是' : '否'}`, terminalState.connected ? 'success' : 'error');
+    addOutput(`昵称：${terminalState.nickname || '未设置'}`, 'info');
+    addOutput(`当前房间：${terminalState.currentRoom || '无'}`, 'info');
     addOutput('========================', 'info');
   }
 
@@ -642,22 +642,22 @@
         // roomType 已经是中文了，如 "德州扑克"
         const gameType = room.roomType;
         const status = room.status;
-        const isRunning = status === 'Running';
+        const isRunning = status === 'Running' || status === '游戏中';
         const isJoinable = !isRunning && room.roomClientCount < 3;
 
         // 根据状态设置不同的样式和行为
         const roomClass = isRunning ? 'room-item room-running' :
           !isJoinable ? 'room-item room-full' :
             'room-item';
-        const onclick = isJoinable ? `onclick="selectRoom('Room #${room.roomId}', ${room.roomId})"` : '';
-        const statusText = isRunning ? 'Running (Cannot Join)' :
-          room.roomClientCount >= 3 ? 'Full' :
-            'Waiting';
+        const onclick = isJoinable ? `onclick="selectRoom('房间 #${room.roomId}', ${room.roomId})"` : '';
+        const statusText = isRunning ? '游戏中（不可加入）' :
+          room.roomClientCount >= 3 ? '人数已满' :
+            '等待中';
 
         roomsHtml += `
           <div class="${roomClass}" ${onclick} ${!isJoinable ? 'style="cursor: not-allowed; opacity: 0.6;"' : ''}>
-            <div class="room-name">Room #${room.roomId}</div>
-            <div class="room-info">ID: ${room.roomId} | ${gameType} | Players: ${room.roomClientCount}/3 | Status: ${statusText}</div>
+            <div class="room-name">房间 #${room.roomId}</div>
+            <div class="room-info">ID：${room.roomId} | ${gameType} | 玩家：${room.roomClientCount}/3 | 状态：${statusText}</div>
           </div>
         `;
       });
@@ -665,8 +665,8 @@
     } else {
       elements.roomList.innerHTML = `
         <div style="text-align: center; padding: 40px; color: #888;">
-          <p>No rooms available</p>
-          <p style="margin-top: 10px; font-size: 14px;">Create a new room or refresh the list</p>
+          <p>暂无可加入的房间</p>
+          <p style="margin-top: 10px; font-size: 14px;">请创建新房间或刷新列表</p>
         </div>
       `;
     }
@@ -688,12 +688,12 @@
     if (terminalState.waitingForGameType && terminalState.roomCreationState === 'selecting_game_type') {
       terminalState.roomCreationState = null;
       terminalState.waitingForGameType = false;
-      addOutput('Room creation cancelled', 'warning');
+      addOutput('已取消创建房间。', 'warning');
     }
   };
 
   window.selectRoom = function (roomName, roomId) {
-    addOutput(`Joining ${roomName} (ID: ${roomId})...`, 'info');
+    addOutput(`正在加入 ${roomName}（ID：${roomId}）...`, 'info');
     terminalState.currentRoom = roomName;
 
     // 发送房间 ID 来加入房间
@@ -705,20 +705,20 @@
 
   window.selectGameType = function (gameType) {
     const gameTypeMap = {
-      'landlord': { name: '斗地主 (Landlord)', number: '1' },
+      'landlord': { name: '斗地主', number: '1' },
       'landlord-laizi': { name: '斗地主-癞子版', number: '2' },
       'landlord-super': { name: '斗地主-大招版', number: '3' },
-      'run-fast': { name: '跑得快 (Run Fast)', number: '4' },
-      'poker': { name: '德州扑克 (Texas Hold\'em)', number: '5' }
+      'run-fast': { name: '跑得快', number: '4' },
+      'poker': { name: '德州扑克', number: '5' }
     };
 
     const selectedGame = gameTypeMap[gameType];
     if (!selectedGame) {
-      addOutput('Error: Invalid game type selected', 'error');
+      addOutput('错误：选择的游戏类型无效。', 'error');
       return;
     }
 
-    addOutput(`Creating ${selectedGame.name} room...`, 'info');
+    addOutput(`正在创建${selectedGame.name}房间...`, 'info');
 
     // Send the correct game type number
     terminalState.wsClient.sendMsg(selectedGame.number);
@@ -738,6 +738,21 @@
 
     // 定义需要在其前面换行的关键词
     const breakBeforePatterns = [
+      '你的手牌：',
+      '公共牌：',
+      '获胜者：',
+      '小盲：',
+      '大盲：',
+      '你是小盲',
+      '你是大盲',
+      '翻牌前回合',
+      '翻牌回合',
+      '转牌回合',
+      '河牌回合',
+      '结算回合',
+      '请选择操作',
+      '请房主',
+      '游戏开始！',
       'Your hand:',
       'Board:',
       'Winner:',
@@ -770,6 +785,7 @@
 
     // 特殊处理玩家金额信息，在每个玩家信息前换行
     formatted = formatted.replace(/(\w+ amount \d+)/g, '\n$1');
+    formatted = formatted.replace(/([^\n]+ 剩余积分：\d+)/g, '\n$1');
 
     // 格式化扑克牌显示，添加空格
     formatted = formatted.replace(/([♠♥♦♣])(\w+)/g, '$1$2 ');
@@ -830,25 +846,25 @@
     let roundDisplay = '';
     switch (terminalState.currentRound) {
       case 'Pre-flop':
-        roundDisplay = 'Pre-flop (翻前)';
+        roundDisplay = '翻牌前';
         break;
       case 'Flop':
-        roundDisplay = 'Flop (翻牌)';
+        roundDisplay = '翻牌';
         break;
       case 'Turn':
-        roundDisplay = 'Turn (转牌)';
+        roundDisplay = '转牌';
         break;
       case 'River':
-        roundDisplay = 'River (河牌)';
+        roundDisplay = '河牌';
         break;
       default:
-        roundDisplay = terminalState.currentRound || 'Unknown';
+        roundDisplay = terminalState.currentRound || '未知回合';
     }
 
     // 创建倒计时显示元素
     const countdownLine = document.createElement('div');
     countdownLine.className = 'countdown-timer';
-    countdownLine.innerHTML = `⏱️ Time to decide [${roundDisplay}]: <span class="countdown-seconds">${timeLeft}s</span>`;
+    countdownLine.innerHTML = `⏱️ 操作倒计时 [${roundDisplay}]：<span class="countdown-seconds">${timeLeft} 秒</span>`;
     elements.output.appendChild(countdownLine);
     terminalState.countdownElement = countdownLine;
 
@@ -861,23 +877,23 @@
       const secondsSpan = countdownLine.querySelector('.countdown-seconds');
 
       if (timeLeft <= 0) {
-        secondsSpan.textContent = '0s';
+        secondsSpan.textContent = '0 秒';
         secondsSpan.style.color = '#ff0041';
-        addOutput('⏰ Time\'s up! Auto-folding...', 'error');
+        addOutput('⏰ 操作超时，已自动弃牌。', 'error');
         // 自动fold
         terminalState.wsClient.sendMsg('fold');
         stopCountdown();
       } else if (timeLeft <= 10) {
         // 最后10秒警告
-        secondsSpan.textContent = timeLeft + 's';
+        secondsSpan.textContent = timeLeft + ' 秒';
         secondsSpan.style.color = '#ff0041';
         secondsSpan.style.animation = 'blink 0.5s infinite';
       } else if (timeLeft <= 20) {
         // 最后20秒提醒
-        secondsSpan.textContent = timeLeft + 's';
+        secondsSpan.textContent = timeLeft + ' 秒';
         secondsSpan.style.color = '#ffaa00';
       } else {
-        secondsSpan.textContent = timeLeft + 's';
+        secondsSpan.textContent = timeLeft + ' 秒';
       }
     }, 1000);
   }

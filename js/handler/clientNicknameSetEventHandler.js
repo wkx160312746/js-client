@@ -13,11 +13,11 @@
             var obj = JSON.parse(clientTransferData.data);
             if ("invalidLength" in obj) {
                 client.setUserName("");
-                panel.append("Your nickname has invalid length: " + obj.invalidLength);
+                panel.append("昵称长度无效：" + obj.invalidLength);
             }
         }
 
-        var tips = "Please set your nickname (upto " + NICKNAME_MAX_LENGTH + " characters)";
+        var tips = "请设置昵称（最多 " + NICKNAME_MAX_LENGTH + " 个字符）：";
         panel.append(tips);
 
         panel.waitInput().then(s => {

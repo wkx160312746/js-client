@@ -8,7 +8,7 @@
     Utils.extend(GamePokerPlayCantPassEventHandler, Handler);
 
     GamePokerPlayCantPassEventHandler.prototype.handle = function(client, panel, clientTransferData) {
-        panel.append("You played the previous card, so you can't pass.");
+        panel.append("上一手牌由你打出，本回合不能不出。");
         client.send(ServerEventCodes.CODE_GAME_POKER_PLAY_REDIRECT, null, null);
     };
 

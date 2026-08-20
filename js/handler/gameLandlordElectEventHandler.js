@@ -12,15 +12,15 @@
         var turnClientId = obj.nextClientId;
 
         if ("preClientNickname" in obj) {
-            panel.append(obj.preClientNickname + " don't rob the landlord!");
+            panel.append(obj.preClientNickname + " 选择不抢地主。");
         }
 
         if (turnClientId == client.getClientId()) {
-            panel.append("It's your turn. Do you want to rob the landlord? [Y/N] (enter [exit|e] to exit current room)");
+            panel.append("轮到你抢地主，是否抢地主？请输入 y/n（输入 exit/e 退出当前房间）。");
             panel.waitInput()
                 .then(s => landlordElectResolve(client, panel, s));
         } else {
-            panel.append("It's " + obj.nextClientNickname + "'s turn. Please wait patiently for his/her confirmation !");
+            panel.append("轮到 " + obj.nextClientNickname + " 抢地主，请等待对方选择。");
         }
     };
 
@@ -33,7 +33,7 @@
         } else if (s == "n") {
             client.send(ServerEventCodes.CODE_GAME_LANDLORD_ELECT, "FALSE", null);
         } else {
-            panel.append("Invalid options");
+            panel.append("输入无效，请输入 y 或 n。");
             panel.waitInput()
                 .then(s => landlordElectResolve(client, panel, s))
         }

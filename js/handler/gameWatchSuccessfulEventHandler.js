@@ -9,17 +9,17 @@
 
     var tips = "                                                 \n" +
         "+------------------------------------------------\n" +
-        "|You are already watching the game.      \n"         +
-        "|Room owner: {}. Room current status: {}.\n"         +
+        "|你已进入观战模式。                       \n"         +
+        "|房主：{}。房间当前状态：{}。             \n"         +
         "+------------------------------------------------\n" +
-        "(Hint: enter [exit|e] to exit.)                  \n" +
+        "（提示：输入 exit/e 退出观战。）                 \n" +
         "                                                   ";
 
     GameWatchSuccessfulEventHandler.prototype.handle = function(client, panel, clientTransferData) {
         client.setWatching(true);
 
         var obj = JSON.parse(clientTransferData.data);
-        panel.append(Utils.format(tips, obj.owner, obj.status));
+        panel.append(Utils.format(tips, obj.owner, Utils.translateDisplayValue(obj.status)));
 
         panel.waitInput()
             .then(s => inputResolve(client, panel, s));
@@ -29,7 +29,7 @@
         s = s.toLowerCase();
 
         if (s == "exit" || s == "e") {
-            panel.append("Spectating ended. Bye.");
+            panel.append("观战已结束。");
             panel.append("");
             panel.append("");
 

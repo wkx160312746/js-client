@@ -113,19 +113,19 @@ var Vm = new Vue({
                     var wsInstance = new WebSocket(this.address);
                     var _this = Vm;
                     if (!nickname) {
-                        _this.writeConsole('danger', 'Nickname不能为空');
+                        _this.writeConsole('danger', '昵称不能为空');
                         return;
                     }
                     if (nickname.length > 10) {
-                        _this.writeConsole('danger', 'Nickname不能超出10个字符');
+                        _this.writeConsole('danger', '昵称不能超过 10 个字符');
                         return;
                     }
                     // 在连接前显示协议信息
                     var isSecure = this.address.startsWith('wss://');
                     var protocolInfo = isSecure ?
-                        '🔒 使用安全加密连接 (WSS)' :
-                        '⚠️ 使用非加密连接 (WS)';
-                    _this.writeConsole('info', '正在连接: ' + this.address);
+                        '🔒 使用安全加密连接（WSS）' :
+                        '⚠️ 使用非加密连接（WS）';
+                    _this.writeConsole('info', '正在连接：' + this.address);
                     _this.writeConsole('info', protocolInfo);
 
                     wsInstance.onopen = function (ev) {
@@ -144,14 +144,14 @@ var Vm = new Vue({
                         var isSecure = _this.instance.url.startsWith('wss://');
                         var protocol = isSecure ? 'WSS (安全连接)' : 'WS (非安全连接)';
                         var protocolIcon = isSecure ? '🔒' : '⚠️';
-                        _this.writeAlert('success', protocolIcon + ' Connected to ' + service.toString() + ' via ' + protocol);
+                        _this.writeAlert('success', protocolIcon + ' 已通过 ' + protocol + ' 连接到 ' + service.toString());
                     }
                     wsInstance.onclose = function (ev) {
                         console.warn(ev)
                         _this.autoSend = false;
                         clearInterval(_this.autoTimer);
                         _this.connected = false;
-                        _this.writeAlert('danger', 'CLOSED => ' + _this.closeCode(ev.code));
+                        _this.writeAlert('danger', '连接已关闭：' + _this.closeCode(ev.code));
                     }
                     wsInstance.onerror = function (ev) {
                         console.warn(ev)
@@ -169,9 +169,9 @@ var Vm = new Vue({
                                     _this.is = true;
                                 } else if (msg === 'INTERACTIVE_SIGNAL_STOP') {
                                     _this.is = false;
-                                } else if (msg.includes("say:")) {
+                                } else if (msg.includes("说：") || msg.includes("say:")) {
                                     _this.writeConsole('success', msg)
-                                } else if (msg.includes("joined room!")) {
+                                } else if (msg.includes("加入了房间") || msg.includes("joined room!")) {
                                     // 检查浏览器是否支持Notification API
                                     if (_this.showNotification) {
                                         // 如果已经授权，或用户同意，则创建一个新的通知
@@ -198,7 +198,7 @@ var Vm = new Vue({
                 }
             } catch (err) {
                 console.warn(err)
-                this.writeAlert('danger', 'Connect server [' + this.address + '] fail, please choose another server.')
+                this.writeAlert('danger', '连接服务器 [' + this.address + '] 失败，请选择其他服务器。')
             }
         },
         autoHeartBeat: function () {

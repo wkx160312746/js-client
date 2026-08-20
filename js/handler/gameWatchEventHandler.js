@@ -67,48 +67,48 @@
     };
 
     function printJoinPlayerInfo(panel, rawData) {
-        panel.append(Utils.format("Player [{}] joined the room", rawData));
+        panel.append(Utils.format("玩家 [{}] 加入了房间。", rawData));
     }
 
     function printGameStartInfo(panel, rawData) {
         var obj = JSON.parse(rawData);
 
-        panel.append("Game starting");
-        panel.append("Player1 : " + obj.player1);
-        panel.append("Player2 : " + obj.player2);
-        panel.append("Player3 : " + obj.player3);
+        panel.append("游戏开始！");
+        panel.append("玩家 1：" + obj.player1);
+        panel.append("玩家 2：" + obj.player2);
+        panel.append("玩家 3：" + obj.player3);
     }
 
     function printRobLandlord(panel, rawData) {
-        panel.append(Utils.format("Player [{}] didn't choose to become the landlord.", rawData));
+        panel.append(Utils.format("玩家 [{}] 选择不抢地主。", rawData));
     }
 
     function printConfirmLandlord(panel, rawData) {
         var obj = JSON.parse(rawData);
 
-        panel.append(Utils.format("Player [{}] has become the landlord and gotten three extra cards:", obj.landlord));
+        panel.append(Utils.format("玩家 [{}] 成为地主并获得三张底牌：", obj.landlord));
         panel.append(Poker.toString(obj.additionalPokers));
     }
 
     function printPlayPokers(panel, rawData) {
         var obj = JSON.parse(rawData);
 
-        panel.append(Utils.format("Player [{}] played::", obj.clientNickname));
+        panel.append(Utils.format("玩家 [{}] 打出：", obj.clientNickname));
         panel.append(Poker.toString(obj.pokers));
     }
 
     function printPlayPass(panel, rawData) {
-        panel.append(Utils.format("Player [{}] passed", rawData));
+        panel.append(Utils.format("玩家 [{}] 选择不出。", rawData));
     }
 
     function printPlayerExit(client, panel, rawData) {
-        panel.append(Utils.format("Player [{}] left the room", rawData));
+        panel.append(Utils.format("玩家 [{}] 离开了房间。", rawData));
         quitWatch(client, panel);
     }
 
     function quitWatch(client, panel) {
-        panel.append("This room will be closed!");
-        panel.append("Spectating ended. Bye.");
+        panel.append("房间即将关闭！");
+        panel.append("观战已结束。");
         panel.append("");
         panel.append("");
 
@@ -119,12 +119,12 @@
     function printGameResult(client, panel, rawData) {
         var obj = JSON.parse(rawData);
 
-        panel.append(Utils.format("Player [{}]({}) won the game.", obj.winnerNickname, obj.winnerType));
+        panel.append(Utils.format("玩家 [{}]（{}）赢得本局！", obj.winnerNickname, Utils.translateDisplayValue(obj.winnerType)));
         quitWatch(client, panel);
     }
 
     function printKickInfo(panel, rawData) {
-        panel.append(Utils.format("Player [{}] has been kicked out for being idle.", rawData));
+        panel.append(Utils.format("玩家 [{}] 因长时间未操作已被移出房间。", rawData));
     }
 
     if (!window._handlers_) {

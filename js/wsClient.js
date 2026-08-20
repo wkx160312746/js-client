@@ -168,15 +168,12 @@
 					} else {
 						// 使用保存的 self 引用
 						self.panel.append(htmlEscape(msg))
-						if (msg.includes("Game starting!")) {
-							notifyMe("Windows 11 Update Notification!");
+						if (msg.includes("游戏开始！") || msg.includes("Game starting!")) {
+							notifyMe("游戏开始！");
 						}
-						if (msg.includes("room current has")) {
-							if (msg.split("room current has")[1].match(/\d+/) >= 3) {
-								notifyMe("Windows 11 Update Notification!");
-							} else {
-								//this.sendMsg("Please waiting for another one!");
-							}
+						var roomCountMatch = msg.match(/(?:room current has|当前共有)\s*(\d+)/);
+						if (roomCountMatch && parseInt(roomCountMatch[1], 10) >= 3) {
+							notifyMe("房间人数已满足开局条件。");
 						}
 					}
 				})
@@ -279,7 +276,7 @@
 
 	WsClient.prototype.close = function () {
 		this.socket.close();
-		this.panel.append("Bye.");
+		this.panel.append("连接已关闭。");
 		this.panel.hide();
 	};
 

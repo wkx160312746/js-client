@@ -8,10 +8,10 @@
     Utils.extend(GamePokerPlayLessEventHandler, Handler);
 
     GamePokerPlayLessEventHandler.prototype.handle = function(client, panel, clientTransferData) {
-        panel.append("Your combination has lower rank than the previous. You cannot play this combination!");
+        panel.append("你的牌型小于上一手，不能这样出牌。");
 
         if (client.getLastPokers() != null) {
-            panel.append(Utils.format("{}[{}] played: ", client.getLastSellClientNickname(), client.getLastSellClientType()));
+            panel.append(Utils.format("{}[{}] 打出：", client.getLastSellClientNickname(), Utils.translateDisplayValue(client.getLastSellClientType())));
             panel.append(Poker.toString(client.getLastPokers()));
         }
 

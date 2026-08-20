@@ -43,7 +43,7 @@
 
     function showInput() {
         var contentDiv = document.querySelector("#content");
-        contentDiv.innerHTML += "Nickname: ";
+        contentDiv.innerHTML += "昵称：";
         var input = document.querySelector("#input");
         input.addEventListener("keypress", selectServer, false);
         input.focus();
@@ -59,11 +59,11 @@
         var input = document.querySelector("#input");
         input.value = input.value.trim()
         if (!input.value) {
-            contentEl.innerHTML += "</br><font color='red'>Nickname不能为空</font></br>";
+            contentEl.innerHTML += "</br><font color='red'>昵称不能为空</font></br>";
             return showInput()
         }
         if (input.value.length > 10) {
-            contentEl.innerHTML += "</br><font color='red'>Nickname不能超出10个字符</font></br>";
+            contentEl.innerHTML += "</br><font color='red'>昵称不能超过 10 个字符</font></br>";
             return showInput()
         }
         var s = window.RatelConfig ? window.RatelConfig.serverAddress : defaultServerAddress
@@ -150,7 +150,7 @@
         document.querySelector("#content").innerHTML +=
             "<div style='margin: 10px 0; padding: 8px 12px; background-color: " + protocolBg +
             "; border: 1px solid " + protocolBorder + "; border-radius: 4px;'>" +
-            protocolIcon + " Connect to <span style='color: " + protocolColor + "; font-weight: bold;'>" +
+            protocolIcon + " 正在连接 <span style='color: " + protocolColor + "; font-weight: bold;'>" +
             wsUrl + "</span>" +
             " <span style='background-color: " + protocolColor + "; color: white; padding: 2px 6px; " +
             "border-radius: 3px; font-size: 12px; margin-left: 8px;'>" + protocol + "</span>" +

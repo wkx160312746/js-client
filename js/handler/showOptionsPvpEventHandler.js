@@ -7,12 +7,12 @@
 
     Utils.extend(ShowOptionsPvpEventHandler, Handler);
 
-    var tips = "PVP: \n" +
-            "1. Create Room\n" +
-            "2. Room List\n" +
-            "3. Join Room\n" +
-            "4. Spectate Game\n" +
-            "Please select an option above (enter [back|b] to return to options list)";
+    var tips = "玩家对战：\n" +
+            "1. 创建房间\n" +
+            "2. 房间列表\n" +
+            "3. 加入房间\n" +
+            "4. 观战\n" +
+            "请选择以上选项（输入 back/b 返回上一级）";
 
     ShowOptionsPvpEventHandler.prototype.handle = function(client, panel, clientTransferData) {
         panel.append(tips);
@@ -34,7 +34,7 @@
                 throw new Error(s + " is not a number.")
             }
         } catch (e) {
-            panel.append("Invalid option, please choose again：");
+            panel.append("选项无效，请重新选择：");
             panel.waitInput().then((s) => optionChooseResolve(client, panel, s));
         }
 
@@ -43,11 +43,11 @@
         } else if (i == 2) {
             client.send(ServerEventCodes.CODE_GET_ROOMS, s);
         } else if (i == 3) {
-            panel.append("Please enter the room id you wish to join (enter [back|b] to return to options list)");
+            panel.append("请输入要加入的房间 ID（输入 back/b 返回上一级）：");
             panel.waitInput()
                 .then(str => joinRoomResolve(client, panel, str));
         } else if (i == 4) {
-            panel.append("Please enter the room id you want to spectate (enter [back] to return to options list)");
+            panel.append("请输入要观战的房间 ID（输入 back 返回上一级）：");
             panel.waitInput()
                 .then(str => watchResolve(client, panel, str));
         }
@@ -60,12 +60,12 @@
                 throw new Error(s + " is not a number.")
             }
         } catch (ex) {
-            panel.append("Invalid option, please choose again：");
+            panel.append("选项无效，请重新选择：");
             panel.waitInput().then((s) => joinRoomResolve(client, panel, s));
         }
 
         if (j < 1) {
-            panel.append("Invalid option, please choose again：");
+            panel.append("选项无效，请重新选择：");
             panel.waitInput().then((s) => joinRoomResolve(client, panel, s));
         } else {
             client.send(ServerEventCodes.CODE_ROOM_JOIN, s);
@@ -79,12 +79,12 @@
                 throw new Error(s + " is not a number.")
             }
         } catch (e) {
-            panel.append("Invalid option, please choose again：");
+            panel.append("选项无效，请重新选择：");
             panel.waitInput().then((s) => watchResolve(client, panel, s));
         }
 
         if (i < 1) {
-            panel.append("Invalid option, please choose again：");
+            panel.append("选项无效，请重新选择：");
             panel.waitInput().then((s) => watchResolve(client, panel, s));
         } else {
             client.send(ServerEventCodes.CODE_GAME_WATCH, s);

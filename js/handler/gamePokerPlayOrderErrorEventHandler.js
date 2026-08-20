@@ -8,7 +8,7 @@
     Utils.extend(GamePokerPlayOrderErrorEventHandler, Handler);
 
     GamePokerPlayOrderErrorEventHandler.prototype.handle = function(client, panel, clientTransferData) {
-        panel.append("It is not your turn yet. Please wait for other players!");
+        panel.append("还没轮到你，请等待其他玩家出牌。");
     };
 
     if (!window._handlers_) {

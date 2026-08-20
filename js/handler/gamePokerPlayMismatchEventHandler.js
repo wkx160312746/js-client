@@ -10,10 +10,10 @@
     GamePokerPlayMismatchEventHandler.prototype.handle = function(client, panel, clientTransferData) {
         var obj = JSON.parse(clientTransferData.data);
 
-        panel.append(Utils.format("Your combination is {} ({}), but the previous combination is {} ({}). Mismatch!", obj.playType, obj.playCount, obj.preType, obj.preCount));
+        panel.append(Utils.format("你的牌型是 {}（{} 张），上一手牌型是 {}（{} 张），牌型不匹配。", Utils.translateDisplayValue(obj.playType), obj.playCount, Utils.translateDisplayValue(obj.preType), obj.preCount));
 
         if (client.getLastPokers() != null) {
-            panel.append(Utils.format("{}[{}] played: ", client.getLastSellClientNickname(), client.getLastSellClientType()));
+            panel.append(Utils.format("{}[{}] 打出：", client.getLastSellClientNickname(), Utils.translateDisplayValue(client.getLastSellClientType())));
             panel.append(Poker.toString(client.getLastPokers()));
         }
 

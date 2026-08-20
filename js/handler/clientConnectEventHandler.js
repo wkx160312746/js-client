@@ -8,7 +8,7 @@
     Utils.extend(ClientConnectEventHandler, Handler);
 
     ClientConnectEventHandler.prototype.handle = function(client, panel, clientTransferData) {
-        panel.append("Connected to server. Welcome to ratel!");
+        panel.append("已连接服务器，欢迎来到 Ratel Online！");
         client.setClientId(parseInt(clientTransferData.data));
     };
 

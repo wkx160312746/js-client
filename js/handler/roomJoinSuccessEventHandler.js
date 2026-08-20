@@ -12,12 +12,12 @@
 
         var joinClientId = obj.clientId;
         if(client.getClientId() == joinClientId) {
-            panel.append("You have joined room：" + obj.roomId + ". There are " + obj.roomClientCount + " players in the room now.");
-            panel.append("Please wait for other players to join. The game would start at three players!");
+            panel.append("你已加入房间 " + obj.roomId + "，当前共有 " + obj.roomClientCount + " 名玩家。");
+            panel.append("请等待其他玩家加入，满三人后即可开始游戏。");
             window.imClient.ratelRoomId = obj.roomId + ''
             window.imClient.roomList()
         }else {
-            panel.append(obj.clientNickname + " joined room, there are currently " + obj.roomClientCount + " in the room.");
+            panel.append(obj.clientNickname + " 加入了房间，当前共有 " + obj.roomClientCount + " 名玩家。");
         }
     };
 

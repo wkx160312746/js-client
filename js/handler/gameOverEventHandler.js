@@ -10,8 +10,8 @@
     GameOverEventHandler.prototype.handle = function(client, panel, clientTransferData) {
         var obj = JSON.parse(clientTransferData.data);
 
-        panel.append(Utils.format("\nPlayer {}[{}] won the game", obj.winnerNickname, obj.winnerType));
-        panel.append("Game over, friendship first, competition second\n");
+        panel.append(Utils.format("\n玩家 {}[{}] 赢得本局！", obj.winnerNickname, Utils.translateDisplayValue(obj.winnerType)));
+        panel.append("本局结束，友谊第一，比赛第二。\n");
     };
 
     if (!window._handlers_) {

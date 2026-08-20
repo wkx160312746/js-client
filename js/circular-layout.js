@@ -91,7 +91,7 @@
     seat.innerHTML = `
             <div class="empty-seat-content">
                 <div class="seat-number">#${seatNumber}</div>
-                <div class="empty-text">Empty</div>
+                <div class="empty-text">空位</div>
             </div>
         `;
     return seat;
@@ -134,9 +134,9 @@
             </div>
             <div class="player-name" title="${player.nickname}">${player.nickname}</div>
             <div class="player-balance">$${this.formatAmount(player.balance || 0)}</div>
-            ${player.currentBet ? `<div class="player-bet">Bet: $${this.formatAmount(player.currentBet)}</div>` : ''}
-            ${player.status && player.status !== 'active' ? `<div class="player-status">${player.status}</div>` : ''}
-            ${player.id === this.currentTurnPlayerId ? '<div class="player-timer"><span class="timer-text">60s</span><div class="timer-progress"></div></div>' : ''}
+            ${player.currentBet ? `<div class="player-bet">下注：$${this.formatAmount(player.currentBet)}</div>` : ''}
+            ${player.status && player.status !== 'active' ? `<div class="player-status">${window.Utils ? window.Utils.translateDisplayValue(player.status) : player.status}</div>` : ''}
+            ${player.id === this.currentTurnPlayerId ? '<div class="player-timer"><span class="timer-text">60 秒</span><div class="timer-progress"></div></div>' : ''}
         `;
 
     // Add player cards if visible
@@ -261,7 +261,16 @@
       this.gameStage = gameData.stage;
       const stageElement = document.getElementById('game-stage');
       if (stageElement) {
-        stageElement.textContent = this.gameStage;
+        const stageNames = {
+          'Waiting': '等待中',
+          'Pre-flop': '翻牌前',
+          'Flop': '翻牌',
+          'Turn': '转牌',
+          'River': '河牌',
+          'Showdown': '摊牌',
+          'Unknown': '未知回合'
+        };
+        stageElement.textContent = stageNames[this.gameStage] || this.gameStage;
       }
     }
 
@@ -324,7 +333,7 @@
     const interval = setInterval(() => {
       timeLeft--;
       if (timerText) {
-        timerText.textContent = timeLeft + 's';
+        timerText.textContent = timeLeft + ' 秒';
       }
       if (timerProgress) {
         timerProgress.style.width = ((60 - timeLeft) / 60 * 100) + '%';
@@ -695,4 +704,4 @@
   // Export to window
   window.CircularLayout = CircularLayout;
 
-})(window); 
+})(window);

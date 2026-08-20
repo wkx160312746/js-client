@@ -7,11 +7,11 @@
 
     Utils.extend(ShowOptionsEventHandler, Handler);
 
-    var tips = "Options: \n" +
-                "1. PvP\n" +
-                "2. PvE\n" +
-                "3. Settings\n" +
-                "Please select an option above (enter [exit|e] to log out)";
+    var tips = "选项：\n" +
+                "1. 玩家对战\n" +
+                "2. 人机对战\n" +
+                "3. 设置\n" +
+                "请选择以上选项（输入 exit/e 退出登录）";
 
     ShowOptionsEventHandler.prototype.handle = function(client, panel, clientTransferData) {
         if (!Utils.isEmpty(clientTransferData.data)) {
@@ -39,7 +39,7 @@
                 throw new Error(s + " is not a number.")
             }
         } catch (e) {
-            panel.append("Invalid option, please choose again：");
+            panel.append("选项无效，请重新选择：");
             panel.waitInput().then((s) => inputResolve(client, panel, s));
         }
 
@@ -54,7 +54,7 @@
                 client.dispatch({code: ClientEventCodes.CODE_SHOW_OPTIONS_SETTING, data: null, info: null});
                 break;
             default:
-                panel.append("Invalid option, please choose again：");
+                panel.append("选项无效，请重新选择：");
                 panel.waitInput().then((s) => inputResolve(client, panel, s));
         }
     }

@@ -1,9 +1,9 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="zh-CN">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Ratel Online - Modern Terminal</title>
+    <title>Ratel Online - 游戏终端</title>
     <link rel="icon" href="favicons/favicon-ts.png" type="image/png">
     <link rel="stylesheet" href="css/modern-terminal.css?v=20250712-1740">
     <link rel="stylesheet" href="libs/font-awesome-4.7.0/css/font-awesome.min.css">
@@ -15,7 +15,7 @@
         <div class="terminal-header">
             <div class="terminal-title">
                 <span class="terminal-icon">▶</span>
-                <span>Ratel Online Terminal v2.0</span>
+                <span>Ratel Online 游戏终端 v2.0</span>
             </div>
             <div class="terminal-controls">
                 <span class="control minimize">─</span>
@@ -35,21 +35,21 @@
 /_/ |_|\__,_/\__/\___/_/   \____/_/ /_/_/_/_/_/ /_/\___/   
                     </pre>
                     <div class="system-info">
-                        <span class="info-label">System:</span> Ratel Gaming Platform<br>
-                        <span class="info-label">Version:</span> 2.0.0<br>
-                        <span class="info-label">Status:</span> <span id="connection-status" class="status-disconnected">Disconnected</span>
+                        <span class="info-label">系统：</span> Ratel 游戏平台<br>
+                        <span class="info-label">版本：</span> 2.0.0<br>
+                        <span class="info-label">状态：</span> <span id="connection-status" class="status-disconnected">未连接</span>
                     </div>
                 </div>
             </div>
             
             <div class="terminal-input-container" id="nickname-input-container">
                 <span class="prompt">ratel@online:~$ </span>
-                <input type="text" class="terminal-input" id="nickname-input" placeholder="Enter your nickname...">
+                <input type="text" class="terminal-input" id="nickname-input" placeholder="请输入昵称...">
             </div>
             
             <div class="terminal-input-container" id="command-input-container" style="display: none;">
                 <span class="prompt" id="user-prompt">user@ratel:~$ </span>
-                <input type="text" class="terminal-input" id="command-input" placeholder="Type 'help' for commands...">
+                <input type="text" class="terminal-input" id="command-input" placeholder="输入 help 查看命令...">
             </div>
         </div>
         
@@ -57,7 +57,7 @@
         <div class="modal" id="room-modal" style="display: none;">
             <div class="modal-content">
                 <div class="modal-header">
-                    <h2>Select Room</h2>
+                    <h2>选择房间</h2>
                     <span class="modal-close" onclick="closeRoomModal()">&times;</span>
                 </div>
                 <div class="modal-body" id="room-list">
@@ -70,7 +70,7 @@
         <div class="modal" id="game-type-modal" style="display: none;">
             <div class="modal-content">
                 <div class="modal-header">
-                    <h2>Select Game Type</h2>
+                    <h2>选择游戏类型</h2>
                     <span class="modal-close" onclick="closeGameTypeModal()">&times;</span>
                 </div>
                 <div class="modal-body">
@@ -105,8 +105,8 @@
                     <div class="game-type-option" onclick="selectGameType('poker')">
                         <div class="game-icon">♠️</div>
                         <div class="game-info">
-                            <h3>5. 德州扑克 (Texas Hold'em)</h3>
-                            <p>Popular poker variant</p>
+                            <h3>5. 德州扑克</h3>
+                            <p>经典公共牌扑克游戏</p>
                         </div>
                     </div>
                 </div>
@@ -118,15 +118,15 @@
     <div class="circular-layout-container" id="circular-layout-container" style="display: none;">
         <div class="layout-header">
             <div class="room-info-display">
-                <span class="room-label">Room #</span><span id="room-number">--</span>
+                <span class="room-label">房间 #</span><span id="room-number">--</span>
                 <span class="separator">|</span>
-                <span class="players-label">Players:</span> <span id="players-count">0/10</span>
+                <span class="players-label">玩家：</span> <span id="players-count">0/10</span>
             </div>
             <div class="layout-controls">
-                <button class="layout-btn" id="refresh-layout" title="Refresh Layout">
+                <button class="layout-btn" id="refresh-layout" title="刷新座位">
                     <i class="fa fa-refresh"></i>
                 </button>
-                <button class="layout-btn" id="toggle-layout" title="Toggle Layout">
+                <button class="layout-btn" id="toggle-layout" title="切换布局">
                     <i class="fa fa-compress"></i>
                 </button>
             </div>
@@ -137,13 +137,13 @@
                 <!-- Center area for pot and community cards -->
                 <div class="center-area">
                     <div class="pot-display">
-                        <div class="pot-label">POT</div>
+                        <div class="pot-label">底池</div>
                         <div class="pot-amount" id="pot-amount">$0</div>
                     </div>
                     <div class="community-cards" id="community-cards">
                         <!-- Community cards will be added here -->
                     </div>
-                    <div class="game-stage" id="game-stage">Waiting...</div>
+                    <div class="game-stage" id="game-stage">等待中...</div>
                 </div>
                 
                 <!-- Player seats will be dynamically added here -->
@@ -153,9 +153,9 @@
         <!-- Game actions panel -->
         <div class="game-actions-panel" id="game-actions-panel" style="display: none;">
             <div class="action-info">
-                <span class="action-label">Current Bet:</span> <span id="current-bet">$0</span>
+                <span class="action-label">当前下注：</span> <span id="current-bet">$0</span>
                 <span class="separator">|</span>
-                <span class="action-label">Your Turn</span>
+                <span class="action-label">轮到你操作</span>
             </div>
             <div class="action-buttons">
                 <button class="action-btn fold-btn" data-action="fold">Fold</button>
@@ -167,7 +167,7 @@
             <div class="raise-controls" id="raise-controls" style="display: none;">
                 <input type="range" class="raise-slider" id="raise-slider" min="0" max="1000" value="0">
                 <input type="number" class="raise-input" id="raise-input" min="0" max="1000" value="0">
-                <button class="confirm-raise-btn" id="confirm-raise">Confirm</button>
+                <button class="confirm-raise-btn" id="confirm-raise">确认</button>
             </div>
         </div>
     </div>
