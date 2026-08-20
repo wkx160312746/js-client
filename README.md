@@ -16,13 +16,48 @@
 
 > 此项目的桌面版本[electronjs-ratel-client](https://github.com/marmot-z/electronjs-ratel-client.git)
 
+### Zeabur 部署
+
+仓库根目录包含可被 Zeabur 自动识别的 `Dockerfile`，不需要填写构建命令或启动命令。
+
+1. 在 Zeabur 中新建服务，选择 **GitHub** 并导入本仓库。
+2. 等待首次构建完成，为前端服务生成一个域名。
+3. 在前端服务的 **Variables** 中添加后端的公开 WebSocket 地址：
+
+```env
+RATEL_WS_URL=wss://你的后端域名/ws
+```
+
+例如后端域名为 `ratel-server-abc.zeabur.app` 时，填写：
+
+```env
+RATEL_WS_URL=wss://ratel-server-abc.zeabur.app/ws
+```
+
+Zeabur 会自动注入 `PORT`，容器会在启动时生成前端配置。修改环境变量后只需重新部署服务，不需要重新构建镜像。可通过 `/health` 检查前端服务状态。
+
+可用变量：
+
+| 变量 | 默认值 | 说明 |
+| --- | --- | --- |
+| `RATEL_WS_URL` | 空 | 推荐设置；完整的 `ws://` 或 `wss://` 后端地址 |
+| `RATEL_SERVER_HOST` | `ratel-be.youdomain.com` | 未设置 `RATEL_WS_URL` 时使用的后端主机名 |
+| `RATEL_SERVER_PORT` | WSS 为 `443`，WS 为 `80` | 未设置完整 URL 时使用的后端端口 |
+| `BACKEND_USE` | `wss` | WebSocket 协议，可选 `ws` 或 `wss` |
+| `RATEL_SERVER_NAME` | `Nico` | 客户端显示的服务器名称 |
+| `RATEL_SERVER_VERSION` | `v1.3.0` | 客户端显示的服务器版本 |
+| `RATEL_IS_DEVELOPMENT` | `false` | 是否启用开发模式 |
+| `PORT` | `8080` | HTTP 监听端口，Zeabur 自动设置 |
+
+注意：浏览器不能访问 Zeabur 的私有服务域名，`RATEL_WS_URL` 必须使用后端服务生成的公开域名。前端通过 HTTPS 访问时必须使用 `wss://`。
+
 ### Install
 
 #### 下载
 
 ```shell
-git clone https://github.com/marmot-z/js-ratel-client.git
-cd js-ratel-client
+git clone https://github.com/wkx160312746/js-client.git
+cd js-client
 ```
 
 #### 部署
@@ -60,28 +95,29 @@ make prod-up
 **环境变量配置：**
 
 ```bash
-# 使用自定义服务器地址构建
-make build RATEL_SERVER_HOST=your.domain.com
+# 推荐：使用完整的 WebSocket 地址启动
+RATEL_WS_URL=wss://your.domain.com/ws make run
 
-# 使用 WSS 协议（HTTPS 环境必需）
-make build RATEL_SERVER_HOST=your.domain.com BACKEND_USE=wss
+# 也可以使用分项配置
+RATEL_SERVER_HOST=your.domain.com BACKEND_USE=wss make run
 
 # 完整参数示例
-make build \
-  RATEL_SERVER_HOST=ratel-be.youdomain.com\
-  RATEL_SERVER_PORT=80 \
+RATEL_SERVER_HOST=ratel-be.youdomain.com \
+  RATEL_SERVER_PORT=443 \
   RATEL_SERVER_NAME=MyServer \
   RATEL_SERVER_VERSION=v1.3.0 \
-  BACKEND_USE=wss
+  BACKEND_USE=wss \
+  make run
 ```
 
 **支持的环境变量：**
 
 - `RATEL_SERVER_HOST`: 服务器地址（默认：ratel-be.youdomain.com）
-- `RATEL_SERVER_PORT`: 服务器端口（默认：80）
+- `RATEL_WS_URL`: 完整 WebSocket 地址（推荐）
+- `RATEL_SERVER_PORT`: 服务器端口（WSS 默认：443）
 - `RATEL_SERVER_NAME`: 服务器名称（默认：Nico）
 - `RATEL_SERVER_VERSION`: 服务器版本（默认：v1.3.0）
-- `BACKEND_USE`: WebSocket 协议类型，可选 `ws` 或 `wss`（默认：ws）
+- `BACKEND_USE`: WebSocket 协议类型，可选 `ws` 或 `wss`（默认：wss）
 - `RATEL_IS_DEVELOPMENT`: 是否为开发环境（默认：false）
 
 **更多 Docker 命令：**

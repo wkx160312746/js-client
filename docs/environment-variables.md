@@ -1,144 +1,62 @@
 # 环境变量配置说明
 
-## 概述
+客户端容器会在每次启动时读取环境变量并生成 `js/config.js`。因此修改变量后只需重启或重新部署容器，不需要重新构建镜像。
 
-Ratel 客户端现在支持通过环境变量配置服务器地址，而不需要修改源代码。这使得在不同环境中部署变得更加灵活。
+## 推荐配置
 
-## 支持的环境变量
+直接设置完整的 WebSocket 地址最可靠：
 
-| 环境变量               | 描述                   | 默认值                   | 示例               |
-| ---------------------- | ---------------------- | ------------------------ | ------------------ |
-| `RATEL_SERVER_HOST`    | 服务器主机名或 IP 地址 | `ratel-be.youdomain.com` | `game.example.com` |
-| `RATEL_SERVER_PORT`    | 服务器端口号           | `80`                     | `8080`             |
-| `RATEL_SERVER_NAME`    | 服务器名称             | `Nico`                   | `GameServer`       |
-| `RATEL_SERVER_VERSION` | 服务器版本             | `v1.3.0`                 | `v2.0.0`           |
-| `RATEL_IS_DEVELOPMENT` | 是否为开发环境         | `false`                  | `true`             |
-
-## 使用方法
-
-### 1. 使用 Make 命令
-
-#### 开发环境
-
-```bash
-# 使用默认配置构建
-make build
-
-# 使用自定义服务器地址构建
-make build RATEL_SERVER_HOST=your.domain.com
-
-# 使用自定义端口构建
-make build RATEL_SERVER_HOST=your.domain.com RATEL_SERVER_PORT=8080
-
-# 启动开发环境
-make run
+```env
+RATEL_WS_URL=wss://game.example.com/ws
 ```
 
-#### 生产环境
+Zeabur 和其他 HTTPS 托管平台必须使用后端的公开域名和 `wss://`。浏览器无法访问平台内部私有域名。
+
+## 支持的变量
+
+| 环境变量 | 默认值 | 说明 |
+| --- | --- | --- |
+| `RATEL_WS_URL` | 空 | 完整 WebSocket 地址；设置后优先于分项地址变量 |
+| `RATEL_SERVER_HOST` | `ratel-be.youdomain.com` | 后端主机名，不带协议和路径 |
+| `RATEL_SERVER_PORT` | WSS 为 `443`，WS 为 `80` | 后端公开端口 |
+| `BACKEND_USE` | `wss` | WebSocket 协议，可选 `ws` 或 `wss` |
+| `RATEL_SERVER_NAME` | `Nico` | 客户端显示的服务器名称 |
+| `RATEL_SERVER_VERSION` | `v1.3.0` | 客户端显示的服务器版本 |
+| `RATEL_SERVER_ADDRESS` | 自动生成 | 完整的客户端服务器描述，通常无需设置 |
+| `RATEL_IS_DEVELOPMENT` | `false` | 是否启用开发模式，只接受 `true` 或 `false` |
+| `PORT` | `8080` | 前端 HTTP 监听端口；Zeabur 会自动注入 |
+
+## Docker Compose
+
+复制示例环境变量并启动：
 
 ```bash
-# 构建生产镜像
-make prod-build RATEL_SERVER_HOST=prod.domain.com
-
-# 启动生产环境
-make prod-up
+cp env.example .env
+docker compose up -d --build
 ```
 
-### 2. 使用 Docker 命令
+也可以仅对单次启动传入变量：
 
 ```bash
-# 直接使用 docker build
-docker build \
-  --build-arg RATEL_SERVER_HOST=your.domain.com \
-  --build-arg RATEL_SERVER_PORT=8080 \
-  --build-arg RATEL_SERVER_NAME=MyServer \
-  --build-arg RATEL_SERVER_VERSION=v2.0.0 \
-  --build-arg RATEL_IS_DEVELOPMENT=true \
-  -t ratel-client:latest .
+RATEL_WS_URL=wss://game.example.com/ws docker compose up -d
+```
 
-# 使用 docker run
+## Docker
+
+```bash
+docker build -t ratel-client:latest .
 docker run -d \
-  -e RATEL_SERVER_HOST=your.domain.com \
-  -e RATEL_SERVER_PORT=8080 \
-  -p 80:80 \
+  -e RATEL_WS_URL=wss://game.example.com/ws \
+  -e PORT=8080 \
+  -p 8080:8080 \
   ratel-client:latest
 ```
 
-### 3. 使用 Docker Compose
-
-在 `docker-compose.yml` 文件中添加环境变量：
-
-```yaml
-version: "3.8"
-services:
-  ratel-client:
-    build:
-      context: .
-      args:
-        RATEL_SERVER_HOST: your.domain.com
-        RATEL_SERVER_PORT: 8080
-        RATEL_SERVER_NAME: MyServer
-        RATEL_SERVER_VERSION: v2.0.0
-        RATEL_IS_DEVELOPMENT: true
-    environment:
-      - RATEL_SERVER_HOST=your.domain.com
-      - RATEL_SERVER_PORT=8080
-    ports:
-      - "80:80"
-```
-
-## 配置文件
-
-系统会自动生成 `js/config.js` 文件，包含以下内容：
-
-```javascript
-window.RatelConfig = {
-  serverAddress: "your.domain.com:8080:MyServer[v2.0.0]",
-  wsAddress: "ws://your.domain.com:8080/ws",
-  isDevelopment: true,
-};
-```
-
-## 注意事项
-
-1. **端口 80**: 当端口为 80 时，WebSocket 地址会自动省略端口号
-2. **构建时替换**: 配置在构建时替换，运行时不能修改
-3. **默认值**: 所有环境变量都有默认值，可以部分覆盖
-4. **版本格式**: 版本需要使用 `v` 前缀，如 `v1.3.0`
-
-## 示例场景
-
-### 开发环境
+## 验证
 
 ```bash
-make build RATEL_SERVER_HOST=localhost RATEL_SERVER_PORT=1025 RATEL_IS_DEVELOPMENT=true
+curl http://localhost:8080/health
+curl http://localhost:8080/js/config.js
 ```
 
-### 测试环境
-
-```bash
-make build RATEL_SERVER_HOST=test.example.com RATEL_SERVER_PORT=8080
-```
-
-### 生产环境
-
-```bash
-make prod-build RATEL_SERVER_HOST=game.example.com RATEL_SERVER_PORT=80
-```
-
-## 验证配置
-
-构建完成后，可以通过以下方式验证配置：
-
-1. 查看浏览器控制台中的 `window.RatelConfig` 对象
-2. 检查容器日志中的配置信息
-3. 访问 `/js/config.js` 文件查看生成的配置
-
-## 故障排除
-
-如果遇到连接问题，请检查：
-
-1. 环境变量是否正确设置
-2. 服务器地址和端口是否可访问
-3. 防火墙配置是否正确
-4. WebSocket 协议是否支持（HTTP/HTTPS）
+`/health` 应返回 `healthy`，`js/config.js` 应显示当前容器的 WebSocket 地址。该配置文件带有禁止缓存响应头，变量更新并重启后浏览器会获取新配置。

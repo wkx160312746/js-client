@@ -11,19 +11,11 @@ endif
 
 # 环境变量配置
 RATEL_SERVER_HOST ?= ratel-be.youdomain.com
-RATEL_SERVER_PORT ?= 80
+RATEL_SERVER_PORT ?= 443
 RATEL_SERVER_NAME ?= Nico
 RATEL_SERVER_VERSION ?= v1.3.0
 RATEL_IS_DEVELOPMENT ?= false
-BACKEND_USE ?= ws
-
-# 构建参数
-BUILD_ARGS := --build-arg RATEL_SERVER_HOST=$(RATEL_SERVER_HOST) \
-              --build-arg RATEL_SERVER_PORT=$(RATEL_SERVER_PORT) \
-              --build-arg RATEL_SERVER_NAME=$(RATEL_SERVER_NAME) \
-              --build-arg RATEL_SERVER_VERSION=$(RATEL_SERVER_VERSION) \
-              --build-arg RATEL_IS_DEVELOPMENT=$(RATEL_IS_DEVELOPMENT) \
-              --build-arg BACKEND_USE=$(BACKEND_USE)
+BACKEND_USE ?= wss
 
 # 默认目标
 help:
@@ -58,14 +50,14 @@ help:
 	@echo "  make build RATEL_SERVER_HOST=your.domain.com"
 	@echo "  make run RATEL_SERVER_HOST=ratel-be.youdomain.com BACKEND_USE=wss"
 	@echo "  make redeploy RATEL_SERVER_HOST=ratel-be.youdomain.com BACKEND_USE=wss"
-	@echo "  make prod-build RATEL_SERVER_HOST=prod.domain.com RATEL_SERVER_PORT=8080"
+	@echo "  RATEL_WS_URL=wss://prod.domain.com/ws make prod-up"
 	@echo ""
 	@echo "测试命令:"
 	@echo "  make test        - 运行测试"
 
 # 开发环境命令
 build:
-	$(DOCKER_COMPOSE) build $(BUILD_ARGS)
+	$(DOCKER_COMPOSE) build
 
 run:
 	$(DOCKER_COMPOSE) up -d
@@ -99,7 +91,7 @@ redeploy: stop build run
 
 # 生产环境命令
 prod-build:
-	docker build $(BUILD_ARGS) -t ratel-client:latest .
+	docker build -t ratel-client:latest .
 
 prod-up:
 	$(DOCKER_COMPOSE) -f docker-compose.prod.yml up -d
@@ -129,4 +121,4 @@ test:
 	@curl -s http://localhost:8889/health || echo "健康检查未通过"
 	@echo ""
 	@echo "测试静态资源..."
-	@curl -s -o /dev/null -w "JS文件状态码: %{http_code}\n" http://localhost:8889/js/init.js || echo "静态资源加载失败" 
+	@curl -s -o /dev/null -w "JS文件状态码: %{http_code}\n" http://localhost:8889/js/init.js || echo "静态资源加载失败"

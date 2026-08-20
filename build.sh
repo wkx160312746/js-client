@@ -1,89 +1,111 @@
 #!/bin/sh
 
-# 设置默认值
+set -eu
+
 DEFAULT_SERVER_HOST="ratel-be.youdomain.com"
-DEFAULT_SERVER_PORT="80"
 DEFAULT_SERVER_NAME="Nico"
 DEFAULT_SERVER_VERSION="v1.3.0"
-DEFAULT_BACKEND_USE="ws"
 
-# 从环境变量获取配置或使用默认值
+APP_PORT=${PORT:-8080}
 RATEL_SERVER_HOST=${RATEL_SERVER_HOST:-$DEFAULT_SERVER_HOST}
-RATEL_SERVER_PORT=${RATEL_SERVER_PORT:-$DEFAULT_SERVER_PORT}
 RATEL_SERVER_NAME=${RATEL_SERVER_NAME:-$DEFAULT_SERVER_NAME}
 RATEL_SERVER_VERSION=${RATEL_SERVER_VERSION:-$DEFAULT_SERVER_VERSION}
-BACKEND_USE=${BACKEND_USE:-$DEFAULT_BACKEND_USE}
+RATEL_IS_DEVELOPMENT=${RATEL_IS_DEVELOPMENT:-false}
+BACKEND_USE=${BACKEND_USE:-wss}
 
-# 构建服务器地址
-SERVER_ADDRESS="${RATEL_SERVER_HOST}:${RATEL_SERVER_PORT}:${RATEL_SERVER_NAME}[${RATEL_SERVER_VERSION}]"
+case "$APP_PORT" in
+    ''|*[!0-9]*)
+        echo "PORT must be a number, got: $APP_PORT" >&2
+        exit 1
+        ;;
+esac
 
-# 构建 WebSocket 地址
-# 根据 BACKEND_USE 决定使用 ws 还是 wss
-if [ "$BACKEND_USE" = "wss" ]; then
-    WS_PROTOCOL="wss"
-else
-    WS_PROTOCOL="ws"
-fi
-
-# 对于默认端口，不需要显式指定
-# ws 默认端口是 80，wss 默认端口是 443
-if [ "$RATEL_SERVER_PORT" = "80" ] && [ "$WS_PROTOCOL" = "ws" ]; then
-    WS_ADDRESS="${WS_PROTOCOL}://${RATEL_SERVER_HOST}/ws"
-elif [ "$RATEL_SERVER_PORT" = "443" ] && [ "$WS_PROTOCOL" = "wss" ]; then
-    WS_ADDRESS="${WS_PROTOCOL}://${RATEL_SERVER_HOST}/ws"
-elif [ "$RATEL_SERVER_PORT" = "80" ] && [ "$WS_PROTOCOL" = "wss" ]; then
-    # 特殊情况：wss 但后端监听 80 端口（通过 Cloudflare）
-    WS_ADDRESS="${WS_PROTOCOL}://${RATEL_SERVER_HOST}/ws"
-else
-    WS_ADDRESS="${WS_PROTOCOL}://${RATEL_SERVER_HOST}:${RATEL_SERVER_PORT}/ws"
-fi
-
-# 是否为开发环境
-IS_DEVELOPMENT=${RATEL_IS_DEVELOPMENT:-false}
-
-echo "正在配置 Ratel 客户端..."
-echo "服务器地址: $SERVER_ADDRESS"
-echo "WebSocket 地址: $WS_ADDRESS"
-echo "WebSocket 协议: $WS_PROTOCOL"
-echo "开发环境: $IS_DEVELOPMENT"
-
-# 检查nginx配置文件
-echo "检查nginx配置文件..."
-nginx -t
-if [ $? -ne 0 ]; then
-    echo "nginx配置文件有错误，查看第45行周围内容："
-    sed -n '40,50p' /etc/nginx/nginx.conf
+if [ "$APP_PORT" -lt 1 ] || [ "$APP_PORT" -gt 65535 ]; then
+    echo "PORT must be between 1 and 65535, got: $APP_PORT" >&2
     exit 1
 fi
 
-# 检查配置文件是否存在并且可以修改
-if [ -f /usr/share/nginx/html/js/config.js ]; then
-    # 创建临时文件并替换内容
-    cp /usr/share/nginx/html/js/config.js /tmp/config.js
-    sed "s|__RATEL_SERVER_ADDRESS__|$SERVER_ADDRESS|g" /tmp/config.js > /tmp/config_temp.js
-    sed "s|__RATEL_WS_ADDRESS__|$WS_ADDRESS|g" /tmp/config_temp.js > /tmp/config_temp2.js
-    sed "s|__RATEL_IS_DEVELOPMENT__|$IS_DEVELOPMENT|g" /tmp/config_temp2.js > /usr/share/nginx/html/js/config.js
-    rm -f /tmp/config.js /tmp/config_temp.js /tmp/config_temp2.js
-    echo "配置文件已更新"
+case "$BACKEND_USE" in
+    ws|wss) ;;
+    *)
+        echo "BACKEND_USE must be ws or wss, got: $BACKEND_USE" >&2
+        exit 1
+        ;;
+esac
+
+case "$RATEL_IS_DEVELOPMENT" in
+    true|false) ;;
+    *)
+        echo "RATEL_IS_DEVELOPMENT must be true or false, got: $RATEL_IS_DEVELOPMENT" >&2
+        exit 1
+        ;;
+esac
+
+if [ -n "${RATEL_SERVER_PORT:-}" ]; then
+    SERVER_PORT=$RATEL_SERVER_PORT
+elif [ "$BACKEND_USE" = "wss" ]; then
+    SERVER_PORT=443
 else
-    echo "配置文件不存在，创建新的配置文件"
-    cat > /usr/share/nginx/html/js/config.js << EOF
-/**
- * 配置文件
- * 在构建时会被替换为实际的环境变量值
- */
-window.RatelConfig = {
-    // 服务器地址，格式：host:port:name[version]
-    serverAddress: "$SERVER_ADDRESS",
-    // WebSocket 地址，格式：ws://host:port/ws
-    wsAddress: "$WS_ADDRESS",
-    // 是否为开发环境
-    isDevelopment: $IS_DEVELOPMENT
-};
-EOF
+    SERVER_PORT=80
 fi
 
-echo "配置完成！"
+case "$SERVER_PORT" in
+    ''|*[!0-9]*)
+        echo "RATEL_SERVER_PORT must be a number, got: $SERVER_PORT" >&2
+        exit 1
+        ;;
+esac
 
-# 启动 nginx
-exec nginx -g "daemon off;" 
+if [ "$SERVER_PORT" -lt 1 ] || [ "$SERVER_PORT" -gt 65535 ]; then
+    echo "RATEL_SERVER_PORT must be between 1 and 65535, got: $SERVER_PORT" >&2
+    exit 1
+fi
+
+if [ -n "${RATEL_WS_URL:-}" ]; then
+    WS_ADDRESS=$RATEL_WS_URL
+    case "$WS_ADDRESS" in
+        ws://*|wss://*) ;;
+        *)
+            echo "RATEL_WS_URL must start with ws:// or wss://" >&2
+            exit 1
+            ;;
+    esac
+else
+
+    if { [ "$BACKEND_USE" = "ws" ] && [ "$SERVER_PORT" = "80" ]; } || \
+       { [ "$BACKEND_USE" = "wss" ] && [ "$SERVER_PORT" = "443" ]; }; then
+        WS_ADDRESS="${BACKEND_USE}://${RATEL_SERVER_HOST}/ws"
+    else
+        WS_ADDRESS="${BACKEND_USE}://${RATEL_SERVER_HOST}:${SERVER_PORT}/ws"
+    fi
+fi
+
+SERVER_ADDRESS=${RATEL_SERVER_ADDRESS:-"${RATEL_SERVER_HOST}:${SERVER_PORT}:${RATEL_SERVER_NAME}[${RATEL_SERVER_VERSION}]"}
+
+# Environment variables are controlled by the deployer, but still escape them
+# before embedding them in JavaScript strings.
+escape_js_string() {
+    printf '%s' "$1" | sed 's/\\/\\\\/g; s/"/\\"/g'
+}
+
+SERVER_ADDRESS_ESCAPED=$(escape_js_string "$SERVER_ADDRESS")
+WS_ADDRESS_ESCAPED=$(escape_js_string "$WS_ADDRESS")
+
+sed "s/__PORT__/$APP_PORT/g" /etc/nginx/nginx.conf.template > /etc/nginx/nginx.conf
+
+cat > /usr/share/nginx/html/js/config.js <<EOF
+/** Generated at container startup. Configure this file with environment variables. */
+window.RatelConfig = {
+    serverAddress: "$SERVER_ADDRESS_ESCAPED",
+    wsAddress: "$WS_ADDRESS_ESCAPED",
+    isDevelopment: $RATEL_IS_DEVELOPMENT
+};
+EOF
+
+echo "Ratel client configured"
+echo "  listen port: $APP_PORT"
+echo "  server: $SERVER_ADDRESS"
+echo "  websocket: $WS_ADDRESS"
+
+nginx -t
+exec nginx -g "daemon off;"
