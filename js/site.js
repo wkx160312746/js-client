@@ -16,12 +16,12 @@
     };
 
     var siteMap = {
-        "w3c": { url: "https://www.w3school.com.cn/", title: "W3C", icon: "" },
+        "baidu": { url: "https://www.baidu.com/", title: "百度一下，你就知道", icon: "favicon-baidu.ico" },
         "ts": { url: "https://www.typescriptlang.org/", title: "TypeScript: JavaScript With Syntax For Types.", icon: "favicon-ts.png" },
         "bilibili": { url: "https://www.bilibili.com/", title: "哔哩哔哩 (゜-゜)つロ 干杯~-bilibili", icon: "favicon-bilibili.ico" }
     };
 
-    var defaultSiteName = "w3c";
+    var defaultSiteName = "baidu";
 
     document.getElementById("switchWebsite").addEventListener("keydown", function (event) {
         if (event.keyCode === 13) {
