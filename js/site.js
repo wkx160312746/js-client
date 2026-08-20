@@ -12,16 +12,18 @@
     Site.prototype.render = function () {
         document.querySelector("#site").src = this.url;
         document.querySelector("#headTitle").innerHTML = this.title;
-        document.querySelector("link[rel*='icon']").href = iconPrefix + this.icon;
+        if (this.icon) {
+            document.querySelector("link[rel*='icon']").href = iconPrefix + this.icon;
+        }
     };
 
     var siteMap = {
-        "baidu": { url: "https://www.baidu.com/", title: "百度一下，你就知道", icon: "favicon-baidu.ico" },
+        "searchmysite": { url: "https://searchmysite.net/", title: "SearchMySite", icon: "" },
         "ts": { url: "https://www.typescriptlang.org/", title: "TypeScript: JavaScript With Syntax For Types.", icon: "favicon-ts.png" },
         "bilibili": { url: "https://www.bilibili.com/", title: "哔哩哔哩 (゜-゜)つロ 干杯~-bilibili", icon: "favicon-bilibili.ico" }
     };
 
-    var defaultSiteName = "baidu";
+    var defaultSiteName = "searchmysite";
 
     document.getElementById("switchWebsite").addEventListener("keydown", function (event) {
         if (event.keyCode === 13) {
