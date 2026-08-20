@@ -9,6 +9,25 @@
 
     var iconPrefix = "./favicons/";
 
+    function normalizeIframeUrl(value) {
+        var url = (value || "").trim();
+        if (!url) return null;
+
+        if (!/^[a-z][a-z\d+.-]*:/i.test(url)) {
+            url = "https://" + url;
+        }
+
+        try {
+            var parsedUrl = new URL(url);
+            if (parsedUrl.protocol !== "http:" && parsedUrl.protocol !== "https:") {
+                return null;
+            }
+            return parsedUrl.href;
+        } catch (error) {
+            return null;
+        }
+    }
+
     Site.prototype.render = function () {
         var iframe = document.querySelector("#site");
         iframe.src = this.url;
@@ -20,21 +39,39 @@
     };
 
     var config = window.SiteConfig || {};
+    var configuredUrl = normalizeIframeUrl(config.iframeUrl) || "about:blank";
     var configuredSite = new Site({
-        url: config.iframeUrl || "about:blank",
+        url: configuredUrl,
         title: config.pageTitle || "Ratel Online",
         icon: config.favicon || ""
     });
+    var requestedUrl = normalizeIframeUrl(new URLSearchParams(window.location.search).get("url"));
+    var initialSite = requestedUrl ? new Site({
+        url: requestedUrl,
+        title: "自定义网页",
+        icon: ""
+    }) : configuredSite;
 
     document.getElementById("switchWebsite").addEventListener("keydown", function (event) {
         if (event.keyCode === 13 && this.value) {
             event.preventDefault();
-            if (!this.value.startsWith('http://') && !this.value.startsWith('https://')) {
-                this.value = 'https://' + this.value;
-            }
-            document.querySelector("#site").src = this.value;
+            var nextUrl = normalizeIframeUrl(this.value);
+            if (!nextUrl) return;
+            this.value = nextUrl;
+            document.querySelector("#site").src = nextUrl;
         }
     });
 
-    window.defaultSite = configuredSite;
+    document.getElementById("defaultSiteButton").addEventListener("click", function () {
+        configuredSite.render();
+        document.getElementById("switchWebsite").value = "";
+
+        var pageUrl = new URL(window.location.href);
+        if (pageUrl.searchParams.has("url")) {
+            pageUrl.searchParams.delete("url");
+            window.history.replaceState(null, "", pageUrl.pathname + pageUrl.search + pageUrl.hash);
+        }
+    });
+
+    window.defaultSite = initialSite;
 }(this));

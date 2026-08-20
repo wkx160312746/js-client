@@ -65,6 +65,14 @@ window.SiteConfig = {
 
 目标网址必须使用 HTTPS，并允许第三方 iframe 嵌入；带有 `X-Frame-Options` 或 `frame-ancestors` 限制的网站无法显示。提交配置并重新部署后即可生效。
 
+也可以通过 `url` 查询参数临时指定 iframe 地址，不传时仍使用 `js/site-config.js` 中的配置：
+
+```text
+https://dzplay.zeabur.app/?url=https%3A%2F%2Fexample.com%2F
+```
+
+生成分享链接时请先对目标网址使用 `encodeURIComponent` 编码。页面右上角的主页按钮可在不中断游戏连接、不刷新主页面的情况下返回配置的默认网页，并清除地址栏中的 `url` 参数。
+
 ### Install
 
 #### 下载
