@@ -14,8 +14,20 @@
 		this.panel = new Panel();
 		this.game = { user: {}, room: { lastPokers: null, lastSellClientNickname: null, lastSellClientType: null }, clientId: -1 };
 		this.reconnectAttempts = 0;
-		this.maxReconnectAttempts = 3;
-		this.reconnectDelay = 2000;
+		this.maxReconnectAttempts = 12;
+		this.reconnectDelay = 1000;
+		this.reconnectTimer = null;
+		this.manualClose = false;
+		this.sessionId = getOrCreateSessionId(window.name || 'player');
+		this.resumeConnection = () => {
+			if (this.manualClose || document.visibilityState === 'hidden') return;
+			if (!this.socket || (this.socket.readyState !== WebSocket.OPEN && this.socket.readyState !== WebSocket.CONNECTING)) {
+				this.reconnectAttempts = 0;
+				this.reconnect(function () {}, function () {});
+			}
+		};
+		document.addEventListener('visibilitychange', this.resumeConnection);
+		window.addEventListener('online', this.resumeConnection);
 	}
 
 	WsClient.version = "1.0.0";
@@ -125,6 +137,35 @@
 		});
 	}
 
+	function getOrCreateSessionId(nickname) {
+		var key = 'ratel-session-id:' + nickname;
+		var stored = null;
+		try {
+			stored = localStorage.getItem(key);
+		} catch (error) {
+			log.warn("Unable to read reconnect session from localStorage", error);
+		}
+		if (stored && /^\d+$/.test(stored) && Number(stored) > 0) {
+			return Number(stored);
+		}
+
+		var sessionId;
+		if (window.crypto && window.crypto.getRandomValues) {
+			var random = new Uint32Array(2);
+			window.crypto.getRandomValues(random);
+			sessionId = (random[0] & 0x1fffff) * 0x100000000 + random[1];
+		} else {
+			sessionId = Date.now() * 1000 + Math.floor(Math.random() * 1000);
+		}
+		if (!sessionId) sessionId = 1;
+		try {
+			localStorage.setItem(key, String(sessionId));
+		} catch (error) {
+			log.warn("Unable to persist reconnect session in localStorage", error);
+		}
+		return sessionId;
+	}
+
 	function notifyMe(text) {
 		if (!("Notification" in window)) {
 			console.log("This browser does not support desktop notification");
@@ -154,10 +195,11 @@
 				this.panel.append("<div style='color: #ff9800; font-weight: bold;'>⚠️ 连接超时，正在重试...</div>");
 			}, 5000);
 
-			this.socket = new WebSocket(this.url);
+			var socket = new WebSocket(this.url);
+			this.socket = socket;
 			// 保存 this 引用
 			var self = this;
-			this.socket.onmessage = (event) => {
+			socket.onmessage = (event) => {
 				var enc = new TextDecoder('utf-8');
 				event.data.arrayBuffer().then(buffer => {
 					let data = JSON.parse(enc.decode(new Uint8Array(buffer))) || {};
@@ -179,8 +221,10 @@
 					}
 				})
 			};
-			this.socket.onopen = (event) => {
+			socket.onopen = (event) => {
+				if (self.socket !== socket) return;
 				clearTimeout(connectTimeout);
+				self.reconnectAttempts = 0;
 				log.info("websocket ({}) open", this.url);
 				this.panel.append("<div style='color: #4CAF50; font-weight: bold;'>✅ WebSocket 连接成功！</div>");
 				this.panel.append("<div style='color: #666; margin-bottom: 10px;'>服务器地址: " + this.url + "</div>");
@@ -188,16 +232,17 @@
 				// 更新连接状态
 				// this.updateConnectionStatus('connected', '已连接');
 
-				this.socket.send(JSON.stringify({
+				socket.send(JSON.stringify({
 					data: JSON.stringify({
-						ID: new Date().getTime(),
+						ID: self.sessionId,
 						Name: window.name,
 						Score: 100
 					})
 				}))
 				resolve();
 			};
-			this.socket.onclose = (e) => {
+			socket.onclose = (e) => {
+				if (self.socket !== socket) return;
 				clearTimeout(connectTimeout);
 				log.info("websocket ({}) close", this.url);
 				this.panel.append("<div style='color: #f44336; font-weight: bold;'>❌ WebSocket 连接已断开</div>");
@@ -207,15 +252,14 @@
 				// this.updateConnectionStatus('disconnected', '已断开');
 
 				// 如果不是正常关闭，尝试重连
-				if (e.code !== 1000 && e.code !== 1001) {
-					this.reconnect()
-						.then(() => resolve())
-						.catch(() => reject(e));
+				if (!self.manualClose && e.code !== 1000 && e.code !== 1001) {
+					self.reconnect(resolve, reject);
 				} else {
 					reject(e);
 				}
 			};
-			this.socket.onerror = (e) => {
+			socket.onerror = (e) => {
+				if (self.socket !== socket) return;
 				clearTimeout(connectTimeout);
 				log.error("Occur a error {}", e);
 				this.panel.append("<div style='color: #f44336; font-weight: bold;'>❌ WebSocket 连接错误</div>");
@@ -231,10 +275,7 @@
 				// 更新连接状态
 				// this.updateConnectionStatus('error', '连接错误');
 
-				// 尝试重连
-				this.reconnect()
-					.then(() => resolve())
-					.catch(() => reject(e));
+				// 浏览器随后会触发 onclose，由 onclose 统一安排重连。
 			};
 
 
@@ -276,30 +317,41 @@
 	};
 
 	WsClient.prototype.close = function () {
-		this.socket.close();
+		this.manualClose = true;
+		if (this.reconnectTimer) {
+			clearTimeout(this.reconnectTimer);
+			this.reconnectTimer = null;
+		}
+		document.removeEventListener('visibilitychange', this.resumeConnection);
+		window.removeEventListener('online', this.resumeConnection);
+		if (this.socket) this.socket.close(1000, '用户主动关闭');
 		this.panel.append("连接已关闭。");
 		this.panel.hide();
 	};
 
-	WsClient.prototype.reconnect = function () {
+	WsClient.prototype.reconnect = function (resolve, reject) {
+		resolve = resolve || function () {};
+		reject = reject || function () {};
+		if (this.manualClose || this.reconnectTimer) return;
 		if (this.reconnectAttempts >= this.maxReconnectAttempts) {
 			this.panel.append("<div style='color: #f44336; font-weight: bold;'>❌ 重连失败，已达到最大重试次数</div>");
-			this.panel.append("<div style='color: #666; margin-top: 10px;'>请刷新页面手动重试</div>");
+			this.panel.append("<div style='color: #666; margin-top: 10px;'>回到此页面或网络恢复后会继续尝试</div>");
 			// this.updateConnectionStatus('error', '重连失败');
-			return Promise.reject(new Error("Max reconnect attempts reached"));
+			reject(new Error("Max reconnect attempts reached"));
+			return;
 		}
 
 		this.reconnectAttempts++;
+		var delay = Math.min(this.reconnectDelay * Math.pow(2, this.reconnectAttempts - 1), 15000);
 		this.panel.append("<div style='color: #ff9800; font-weight: bold;'>🔄 正在尝试重新连接... (第 " +
 			this.reconnectAttempts + "/" + this.maxReconnectAttempts + " 次)</div>");
 
 		// this.updateConnectionStatus('connecting', '重连中 ' + this.reconnectAttempts + '/' + this.maxReconnectAttempts);
 
-		return new Promise((resolve, reject) => {
-			setTimeout(() => {
-				this.initWebsocketConnect(resolve, reject);
-			}, this.reconnectDelay);
-		});
+		this.reconnectTimer = setTimeout(() => {
+			this.reconnectTimer = null;
+			this.initWebsocketConnect(resolve, reject);
+		}, delay);
 	};
 
 	// --------------- getter/setter ------------------------
