@@ -5,7 +5,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width,initial-scale=1,user-scalable=no">
     <link type="text/css" rel="stylesheet" href="css/client.css?v=20260820-url">
-    <link type="text/css" rel="stylesheet" href="css/console.css?v=20260820-layout">
+    <link type="text/css" rel="stylesheet" href="css/console.css?v=20260822-games">
     <link type="text/css" rel="stylesheet" href="css/mobile.css?v=20260820-layout">
     <link type="text/css" rel="stylesheet" href="css/poker-suits.css">
     <link rel="stylesheet" href="libs/font-awesome-4.7.0/css/font-awesome.min.css">
@@ -101,19 +101,44 @@
             </div>
         </div>
         <div id="terminal">
-        <div id="bar" style="cursor: pointer; transition: all 0.3s ease;" onmouseover="this.style.backgroundColor='#d8d8d8'; this.style.color='#333'; this.style.textDecoration='underline';" onmouseout="this.style.backgroundColor=''; this.style.color=''; this.style.textDecoration='';" onclick="window.location.href='modern-terminal.html'" title="点击进入现代终端">德州扑克规则</div>
+        <div id="bar" style="cursor: pointer; transition: all 0.3s ease;" onmouseover="this.style.backgroundColor='#d8d8d8'; this.style.color='#333'; this.style.textDecoration='underline';" onmouseout="this.style.backgroundColor=''; this.style.color=''; this.style.textDecoration='';" onclick="window.location.href='modern-terminal.html'" title="点击进入现代终端">游戏规则</div>
             <div id="contains">
                 <div id="content">
-                    <section class="texas-rules" aria-labelledby="texas-rules-title">
-                        <strong id="texas-rules-title">基本规则</strong>
-                        <ol>
-                            <li>每位玩家获得两张底牌，与五张公共牌组成最佳五张牌。</li>
-                            <li>依次进行翻牌前、翻牌、转牌、河牌四轮下注。</li>
-                            <li>可选择过牌（check）、跟注（call）、加注（raise）、弃牌（fold）或全下（allin）。</li>
-                            <li>牌型从大到小：皇家同花顺、同花顺、四条、葫芦、同花、顺子、三条、两对、一对、高牌。</li>
-                            <li>摊牌时最佳五张牌最大者赢得底池；完全相同则平分底池。</li>
-                        </ol>
-                    </section>
+                    <div class="game-rules" aria-label="游戏中文说明">
+                        <section class="game-rule">
+                            <h3>1. 斗地主</h3>
+                            <p>三名玩家竞叫地主，地主独自对抗两名农民。按相同牌型打出更大的组合，最先出完手牌的一方获胜。</p>
+                        </section>
+                        <section class="game-rule">
+                            <h3>2. 斗地主-癞子版</h3>
+                            <p>沿用斗地主的组队与出牌规则，并加入可替代其他点数的癞子牌，能够组成更多牌型。</p>
+                        </section>
+                        <section class="game-rule">
+                            <h3>3. 斗地主-大招版</h3>
+                            <p>在斗地主基础上加入特殊技能与扩展规则，合理选择技能时机可以改变牌局走向。</p>
+                        </section>
+                        <section class="game-rule">
+                            <h3>4. 跑得快</h3>
+                            <p>三名玩家依次出牌，后手需用相同牌型压过前手。目标是尽快打完自己的全部手牌。</p>
+                        </section>
+                        <section class="game-rule">
+                            <h3>5. 德州扑克</h3>
+                            <p>每人获得两张底牌，结合五张公共牌组成最佳五张牌。依次进行翻牌前、翻牌、转牌和河牌下注。</p>
+                            <p>操作命令：过牌（check）、跟注（call）、加注（raise）、弃牌（fold）、全下（allin）。</p>
+                        </section>
+                        <section class="game-rule">
+                            <h3>6. 麻将</h3>
+                            <p>玩家轮流摸牌和出牌，通过组合顺子、刻子等牌组完成规定牌型，率先和牌者获胜。</p>
+                        </section>
+                        <section class="game-rule">
+                            <h3>7. 骗子酒馆</h3>
+                            <p>玩家轮流暗出牌并声明牌面，其他玩家可选择相信或质疑。通过判断与虚张声势淘汰对手。</p>
+                        </section>
+                        <section class="game-rule">
+                            <h3>9. 谁是卧底</h3>
+                            <p>多数玩家获得平民词，少数玩家获得不同的卧底词。轮流描述后投票，平民要找出卧底，卧底要隐藏身份。</p>
+                        </section>
+                    </div>
                 </div>
                 <div class="inputBox">
                     <div id="prefix"><i class="fa fa-angle-right" aria-hidden="true"
@@ -142,7 +167,7 @@
 <script type="text/javascript" src="js/wsClient.js?v=20260821-reconnect"></script>
 <script type="text/javascript" src="js/imClient.js?v=20250710-1334"></script>
 <script type="text/javascript" src="js/site.js?v=20260820-url"></script>
-<script type="text/javascript" src="js/responsive.js?v=20260820-layout"></script>
+<script type="text/javascript" src="js/responsive.js?v=20260822-esc"></script>
 <script type="text/javascript" src="js/init.js?v=20260820-zh"></script>
     <script>
         // 彩蛋功能：控制台命令触发

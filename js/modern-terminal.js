@@ -709,7 +709,10 @@
       'landlord-laizi': { name: '斗地主-癞子版', number: '2' },
       'landlord-super': { name: '斗地主-大招版', number: '3' },
       'run-fast': { name: '跑得快', number: '4' },
-      'poker': { name: '德州扑克', number: '5' }
+      'poker': { name: '德州扑克', number: '5' },
+      'mahjong': { name: '麻将', number: '6' },
+      'liar': { name: '骗子酒馆', number: '7' },
+      'undercover': { name: '谁是卧底', number: '9' }
     };
 
     const selectedGame = gameTypeMap[gameType];

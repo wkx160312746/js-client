@@ -5,7 +5,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Ratel Online - 游戏终端</title>
     <link rel="icon" href="favicons/favicon-ts.png" type="image/png">
-    <link rel="stylesheet" href="css/modern-terminal.css?v=20250712-1740">
+    <link rel="stylesheet" href="css/modern-terminal.css?v=20260822-games">
     <link rel="stylesheet" href="libs/font-awesome-4.7.0/css/font-awesome.min.css">
     <link rel="stylesheet" href="css/circular-layout.css?v=20250712-1800">
     <link rel="stylesheet" href="css/poker-suits.css">
@@ -73,40 +73,61 @@
                     <h2>选择游戏类型</h2>
                     <span class="modal-close" onclick="closeGameTypeModal()">&times;</span>
                 </div>
-                <div class="modal-body">
-                    <!-- <div class="game-type-option" onclick="selectGameType('landlord')">
+                <div class="modal-body game-type-list">
+                    <div class="game-type-option" onclick="selectGameType('landlord')">
                         <div class="game-icon">🃏</div>
                         <div class="game-info">
-                            <h3>1. 斗地主 (Landlord)</h3>
-                            <p>Classic Chinese card game</p>
+                            <h3>1. 斗地主</h3>
+                            <p>三人经典抢地主玩法，两名农民合作对抗地主</p>
                         </div>
                     </div>
                     <div class="game-type-option" onclick="selectGameType('landlord-laizi')">
                         <div class="game-icon">🎴</div>
                         <div class="game-info">
                             <h3>2. 斗地主-癞子版</h3>
-                            <p>Landlord with wild cards</p>
+                            <p>加入可代替其他点数的癞子牌，牌型组合更多</p>
                         </div>
                     </div>
                     <div class="game-type-option" onclick="selectGameType('landlord-super')">
                         <div class="game-icon">🎯</div>
                         <div class="game-info">
                             <h3>3. 斗地主-大招版</h3>
-                            <p>Landlord with special moves</p>
+                            <p>加入特殊技能与扩展规则的斗地主玩法</p>
                         </div>
                     </div>
                     <div class="game-type-option" onclick="selectGameType('run-fast')">
                         <div class="game-icon">🏃</div>
                         <div class="game-info">
-                            <h3>4. 跑得快 (Run Fast)</h3>
-                            <p>Fast-paced shedding game</p>
+                            <h3>4. 跑得快</h3>
+                            <p>三人竞速出牌，最先出完手牌的玩家获胜</p>
                         </div>
-                    </div> -->
+                    </div>
                     <div class="game-type-option" onclick="selectGameType('poker')">
                         <div class="game-icon">♠️</div>
                         <div class="game-info">
                             <h3>5. 德州扑克</h3>
-                            <p>经典公共牌扑克游戏</p>
+                            <p>使用手牌与公共牌，组合出最佳五张牌</p>
+                        </div>
+                    </div>
+                    <div class="game-type-option" onclick="selectGameType('mahjong')">
+                        <div class="game-icon">🀄</div>
+                        <div class="game-info">
+                            <h3>6. 麻将</h3>
+                            <p>轮流摸牌与出牌，率先组成规定牌型获胜</p>
+                        </div>
+                    </div>
+                    <div class="game-type-option" onclick="selectGameType('liar')">
+                        <div class="game-icon">🍺</div>
+                        <div class="game-info">
+                            <h3>7. 骗子酒馆</h3>
+                            <p>通过叫牌、虚张声势与质疑展开心理博弈</p>
+                        </div>
+                    </div>
+                    <div class="game-type-option" onclick="selectGameType('undercover')">
+                        <div class="game-icon">🕵️</div>
+                        <div class="game-info">
+                            <h3>9. 谁是卧底</h3>
+                            <p>描述各自词语并投票，找出隐藏的卧底</p>
                         </div>
                     </div>
                 </div>
@@ -217,7 +238,7 @@
             window.ClientEventCodes = window.ClientEventCode || {};
         }
     </script>
-    <script type="text/javascript" src="js/modern-terminal.js?v=20260820-zh"></script>
+    <script type="text/javascript" src="js/modern-terminal.js?v=20260822-games"></script>
     <script type="text/javascript" src="js/circular-layout.js?v=20260820-zh"></script>
 </body>
 </html>

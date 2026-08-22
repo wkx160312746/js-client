@@ -26,23 +26,30 @@
     line-height: 1;
 }
 
-.texas-rules {
+.game-rules {
     color: #222;
     line-height: 1.7;
     padding: 4px 0 8px;
 }
 
-.texas-rules strong {
+.game-rule {
+    padding: 10px 0;
+    border-bottom: 1px solid #e1e4e8;
+}
+
+.game-rule:last-child {
+    border-bottom: 0;
+}
+
+.game-rule h3 {
+    margin: 0 0 4px;
+    color: #1f5f9f;
     font-size: 14px;
 }
 
-.texas-rules ol {
-    margin: 4px 0 0;
-    padding-left: 22px;
-}
-
-.texas-rules li {
-    margin: 1px 0;
+.game-rule p {
+    margin: 2px 0;
+    font-size: 13px;
 }
 
 #console .tools {

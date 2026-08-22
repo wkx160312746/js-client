@@ -28,6 +28,13 @@
         setPanelOpen(true);
     });
 
+    document.addEventListener('keydown', function (event) {
+        if (event.key === 'Escape' && !document.body.classList.contains('game-panel-collapsed')) {
+            event.preventDefault();
+            setPanelOpen(false);
+        }
+    });
+
     window.GamePanelLayout = {
         collapse: function () { setPanelOpen(false); },
         expand: function () { setPanelOpen(true); },
