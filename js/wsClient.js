@@ -311,9 +311,14 @@
 	};
 
 	WsClient.prototype.sendMsg = function (msg) {
+		if (!this.socket || this.socket.readyState !== WebSocket.OPEN) {
+			this.panel.append("<div style='color: #ff9800;'>连接尚未恢复，请稍后重试。</div>");
+			return false;
+		}
 		this.socket.send(JSON.stringify({
 			data: msg
 		}))
+		return true;
 	};
 
 	WsClient.prototype.close = function () {

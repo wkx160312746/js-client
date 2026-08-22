@@ -50,9 +50,7 @@
                     }else if(val == 'help'){
                         this.help()
                     }else {
-                        if(window.is){
-                            window.wsClient.sendMsg(val)
-                        }
+                        window.wsClient.sendMsg(val)
                         // this.append(prefix + val + '</div>');
                     }
                     this.inputBox.value = "";
