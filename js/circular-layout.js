@@ -376,10 +376,10 @@
       command = `raise ${amount}`;
     }
 
-    this.wsClient.sendMsg(command);
-
-    // Hide action panel
-    this.hideActionPanel();
+    if (this.wsClient.sendMsg(command)) {
+      // Hide action panel only after a locally valid action.
+      this.hideActionPanel();
+    }
   };
 
   // Setup event listeners

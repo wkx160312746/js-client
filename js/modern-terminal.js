@@ -200,9 +200,10 @@
     const gameCommands = ['call', 'raise', 'fold', 'check', 'allin'];
     if (gameCommands.includes(command)) {
       // Send game command directly to server
-      terminalState.wsClient.sendMsg(input);
-      // 停止倒计时
-      stopCountdown();
+      if (terminalState.wsClient.sendMsg(input)) {
+        // 只有服务器可接受的操作才结束本地倒计时
+        stopCountdown();
+      }
       return;
     }
 

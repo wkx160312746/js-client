@@ -12,7 +12,13 @@
 
 		this.url = url;
 		this.panel = new Panel();
-		this.game = { user: {}, room: { lastPokers: null, lastSellClientNickname: null, lastSellClientType: null }, clientId: -1 };
+		this.game = {
+			user: {},
+			room: { lastPokers: null, lastSellClientNickname: null, lastSellClientType: null },
+			clientId: -1,
+			awaitingBetAction: false,
+			requiredCall: 0
+		};
 		this.reconnectAttempts = 0;
 		this.maxReconnectAttempts = 12;
 		this.reconnectDelay = 1000;
@@ -208,7 +214,9 @@
 						window.is = true;
 					} else if (msg == 'INTERACTIVE_SIGNAL_STOP') {
 						window.is = false;
+						self.game.awaitingBetAction = false;
 					} else {
+						self.updateBetActionState(msg);
 						// 使用保存的 self 引用
 						self.panel.append(htmlEscape(msg))
 						if (msg.includes("游戏开始！") || msg.includes("Game starting!")) {
@@ -315,10 +323,45 @@
 			this.panel.append("<div style='color: #ff9800;'>连接尚未恢复，请稍后重试。</div>");
 			return false;
 		}
+		var normalized = String(msg).trim().toLowerCase();
+		var command = normalized.split(/\s+/)[0];
+		if (this.game.awaitingBetAction && command === 'check' && this.game.requiredCall > 0) {
+			this.panel.append("<div style='color: #ff9800; font-weight: bold;'>不能过牌：你还需跟注 " +
+				this.game.requiredCall + "。请选择 call、raise、fold 或 allin。</div>");
+			return false;
+		}
+		if (this.game.awaitingBetAction && command === 'call' && this.game.requiredCall === 0) {
+			this.panel.append("<div style='color: #ff9800; font-weight: bold;'>当前无需跟注，请使用 check 过牌。</div>");
+			return false;
+		}
 		this.socket.send(JSON.stringify({
 			data: msg
 		}))
+		if (this.game.awaitingBetAction && /^(call|raise|fold|check|allin)$/.test(command)) {
+			this.game.awaitingBetAction = false;
+		}
 		return true;
+	};
+
+	WsClient.prototype.updateBetActionState = function (msg) {
+		if (typeof msg !== 'string' || !msg.includes('请选择操作')) return;
+		this.game.awaitingBetAction = true;
+		var callMatch = msg.match(/跟注需要\s*(\d+)/);
+		if (callMatch) {
+			this.game.requiredCall = parseInt(callMatch[1], 10);
+			return;
+		}
+		if (msg.includes('当前无需 call')) {
+			this.game.requiredCall = 0;
+			return;
+		}
+		var ownBetMatch = msg.match(/\*\s*你[^\n]*累计下注：(\d+)/);
+		var bets = Array.from(msg.matchAll(/累计下注：(\d+)/g), function (match) {
+			return parseInt(match[1], 10);
+		});
+		var maxBet = bets.length > 0 ? Math.max.apply(Math, bets) : 0;
+		var ownBet = ownBetMatch ? parseInt(ownBetMatch[1], 10) : maxBet;
+		this.game.requiredCall = Math.max(0, maxBet - ownBet);
 	};
 
 	WsClient.prototype.close = function () {
