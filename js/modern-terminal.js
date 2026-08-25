@@ -197,7 +197,7 @@
     }
 
     // Check for game commands (poker actions)
-    const gameCommands = ['call', 'raise', 'fold', 'check', 'allin'];
+    const gameCommands = ['call', 'raise', 'fold', 'check', 'allin', 'look', 'compare'];
     if (gameCommands.includes(command)) {
       // Send game command directly to server
       if (terminalState.wsClient.sendMsg(input)) {
@@ -414,7 +414,7 @@
               stopCountdown();
             }
             // 行动提示
-            else if (line.includes('请选择操作') || line.includes('What do you want to do?')) {
+            else if (line.includes('请选择操作') || line.includes('请选择炸金花操作') || line.includes('What do you want to do?')) {
               messageType = 'prompt';
               // 开始倒计时
               startCountdown(60);
@@ -643,8 +643,15 @@
         // roomType 已经是中文了，如 "德州扑克"
         const gameType = room.roomType;
         const status = room.status;
+        const maxPlayersByType = {
+          '德州扑克': 10,
+          '炸金花': 6,
+          '骗子酒馆': 4,
+          '谁是卧底': 6
+        };
+        const maxPlayers = maxPlayersByType[gameType] || 3;
         const isRunning = status === 'Running' || status === '游戏中';
-        const isJoinable = !isRunning && room.roomClientCount < 3;
+        const isJoinable = !isRunning && room.roomClientCount < maxPlayers;
 
         // 根据状态设置不同的样式和行为
         const roomClass = isRunning ? 'room-item room-running' :
@@ -652,13 +659,13 @@
             'room-item';
         const onclick = isJoinable ? `onclick="selectRoom('房间 #${room.roomId}', ${room.roomId})"` : '';
         const statusText = isRunning ? '游戏中（不可加入）' :
-          room.roomClientCount >= 3 ? '人数已满' :
+          room.roomClientCount >= maxPlayers ? '人数已满' :
             '等待中';
 
         roomsHtml += `
           <div class="${roomClass}" ${onclick} ${!isJoinable ? 'style="cursor: not-allowed; opacity: 0.6;"' : ''}>
             <div class="room-name">房间 #${room.roomId}</div>
-            <div class="room-info">ID：${room.roomId} | ${gameType} | 玩家：${room.roomClientCount}/3 | 状态：${statusText}</div>
+            <div class="room-info">ID：${room.roomId} | ${gameType} | 玩家：${room.roomClientCount}/${maxPlayers} | 状态：${statusText}</div>
           </div>
         `;
       });
@@ -713,7 +720,8 @@
       'poker': { name: '德州扑克', number: '5' },
       'mahjong': { name: '麻将', number: '6' },
       'liar': { name: '骗子酒馆', number: '7' },
-      'undercover': { name: '谁是卧底', number: '9' }
+      'undercover': { name: '谁是卧底', number: '9' },
+      'zhajinhua': { name: '炸金花', number: '10' }
     };
 
     const selectedGame = gameTypeMap[gameType];
@@ -755,6 +763,7 @@
       '河牌回合',
       '结算回合',
       '请选择操作',
+      '请选择炸金花操作',
       '请房主',
       '游戏开始！',
       'Your hand:',
@@ -778,6 +787,8 @@
       '>> raise',
       '>> check',
       '>> allin',
+      '>> look',
+      '>> compare',
       '>> Settlement'
     ];
 
