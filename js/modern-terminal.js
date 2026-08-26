@@ -15,6 +15,7 @@
     availableRooms: [], // 存储可用房间列表
     countdownTimer: null, // 倒计时定时器
     countdownElement: null, // 倒计时显示元素
+    horseRaceStatusElement: null, // 赛马实时状态块
     isMyTurn: false, // 是否轮到我行动
     currentRound: '', // 当前回合阶段
     roomCreationState: null, // 房间创建状态: null, 'selecting_mode', 'selecting_pvp_option', 'selecting_game_type'
@@ -293,6 +294,10 @@
 
         // Skip empty messages
         if (cleanMessage.trim()) {
+          if (renderHorseRaceStatus(cleanMessage)) {
+            return;
+          }
+
           // 检查消息中是否包含房间列表信息
           const roomDataPattern = /(\d+)\s+([\u4e00-\u9fa5\w-]+)\s+(\d+)\s+(等待中|游戏中|已满|Waiting|Running|Full)/g;
           const roomMatches = [...cleanMessage.matchAll(roomDataPattern)];
@@ -554,6 +559,7 @@
   function clearTerminal() {
     const welcomeMessage = elements.output.querySelector('.welcome-message');
     elements.output.innerHTML = '';
+    terminalState.horseRaceStatusElement = null;
     if (welcomeMessage) {
       elements.output.appendChild(welcomeMessage);
     }
@@ -816,6 +822,30 @@
   }
 
   // Add a single line to output
+  function isHorseRaceTrackLine(line) {
+    return /^\s*(?:>>\s*)?\d+号\s+.+?：.*🏇.*🏁\s+\d+%/.test(line);
+  }
+
+  function renderHorseRaceStatus(message) {
+    const lines = message.split('\n').map(line => line.trim()).filter(Boolean);
+    if (!lines.some(isHorseRaceTrackLine)) return false;
+
+    const normalizedLines = lines.map(line => line.replace(/^>>\s*/, ''));
+    if (!terminalState.horseRaceStatusElement || !elements.output.contains(terminalState.horseRaceStatusElement)) {
+      terminalState.horseRaceStatusElement = document.createElement('div');
+      terminalState.horseRaceStatusElement.className = 'output-line horse-race-status';
+    }
+
+    if (normalizedLines.some(line => line.includes('比赛结束！'))) {
+      stopCountdown();
+    }
+
+    terminalState.horseRaceStatusElement.textContent = normalizedLines.join('\n');
+    elements.output.appendChild(terminalState.horseRaceStatusElement);
+    autoScrollToBottom();
+    return true;
+  }
+
   function addSingleLine(line, type = 'default') {
     if (!line.trim()) return;
 
