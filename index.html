@@ -4,8 +4,8 @@
     <title id='headTitle'></title>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width,initial-scale=1,user-scalable=no">
-    <link type="text/css" rel="stylesheet" href="css/client.css?v=20260820-url">
-    <link type="text/css" rel="stylesheet" href="css/console.css?v=20260822-games">
+    <link type="text/css" rel="stylesheet" href="css/client.css?v=20260826-compact-rules">
+    <link type="text/css" rel="stylesheet" href="css/console.css?v=20260826-compact-rules">
     <link type="text/css" rel="stylesheet" href="css/mobile.css?v=20260820-layout">
     <link type="text/css" rel="stylesheet" href="css/poker-suits.css">
     <link rel="stylesheet" href="libs/font-awesome-4.7.0/css/font-awesome.min.css">
@@ -143,6 +143,11 @@
                             <p>每人获得三张暗牌并投入底注。牌型从大到小为豹子、同花顺、同花、顺子、对子、单张，A23 是最小顺子。不同花色的 235 可特殊吃豹子，同花色 235 仍算同花。</p>
                             <p>操作命令：看牌（look）、跟注（call）、加注（raise N）、比牌（compare 玩家ID）、弃牌（fold）。看牌后的跟注与加注费用为暗牌玩家的两倍。</p>
                         </section>
+                        <section class="game-rule">
+                            <h3>11. 赛马</h3>
+                            <p>2 至 10 名玩家从六匹马中选择一匹下注，30 秒后自动开跑。比赛中的冲刺、顺风、胡萝卜、水坑等随机趣味事件会真实改变马速。</p>
+                            <p>操作命令：下注（bet 马号 金额）。每轮只能押一匹马，可以追加同一匹马，单次最低 10 积分。押中者按下注比例瓜分奖池，无人押中则原额退款。</p>
+                        </section>
                     </div>
                 </div>
                 <div class="inputBox">
@@ -169,7 +174,7 @@
 <script type="text/javascript" src="js/eventWrapper.js?v=20250710-1334"></script>
 <script type="text/javascript" src="js/toggleable.js?v=20260820-layout"></script>
 <script type="text/javascript" src="js/panel.js?v=20260822-resume-input"></script>
-<script type="text/javascript" src="js/wsClient.js?v=20260825-bet-actions"></script>
+<script type="text/javascript" src="js/wsClient.js?v=20260826-horse-racing"></script>
 <script type="text/javascript" src="js/imClient.js?v=20250710-1334"></script>
 <script type="text/javascript" src="js/site.js?v=20260820-url"></script>
 <script type="text/javascript" src="js/responsive.js?v=20260822-esc"></script>

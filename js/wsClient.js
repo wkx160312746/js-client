@@ -143,6 +143,16 @@
 		});
 	}
 
+	function parseHorseRacingEvent(message) {
+		if (typeof message !== 'string' || message.charAt(0) !== '{') return null;
+		try {
+			var parsed = JSON.parse(message);
+			return parsed && parsed.game === 'horse_racing' ? parsed : null;
+		} catch (error) {
+			return null;
+		}
+	}
+
 	function getOrCreateSessionId(nickname) {
 		var key = 'ratel-session-id:' + nickname;
 		var stored = null;
@@ -216,6 +226,14 @@
 						window.is = false;
 						self.game.awaitingBetAction = false;
 					} else {
+						var horseRacingEvent = parseHorseRacingEvent(msg);
+						if (horseRacingEvent) {
+							window.dispatchEvent(new CustomEvent('horse-racing-event', { detail: horseRacingEvent }));
+							if (!window.horseRacingView && horseRacingEvent.message) {
+								self.panel.append(htmlEscape(horseRacingEvent.message));
+							}
+							return;
+						}
 						self.updateBetActionState(msg);
 						// 使用保存的 self 引用
 						self.panel.append(htmlEscape(msg))

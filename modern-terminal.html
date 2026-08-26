@@ -8,6 +8,7 @@
     <link rel="stylesheet" href="css/modern-terminal.css?v=20260822-games">
     <link rel="stylesheet" href="libs/font-awesome-4.7.0/css/font-awesome.min.css">
     <link rel="stylesheet" href="css/circular-layout.css?v=20260825-bet-actions">
+    <link rel="stylesheet" href="css/horse-racing.css?v=20260826-horse-racing">
     <link rel="stylesheet" href="css/poker-suits.css">
 </head>
 <body>
@@ -137,10 +138,68 @@
                             <p>三张暗牌比大小，特殊 235 可吃豹子</p>
                         </div>
                     </div>
+                    <div class="game-type-option" onclick="selectGameType('horse-racing')">
+                        <div class="game-icon">🏁</div>
+                        <div class="game-info">
+                            <h3>11. 赛马</h3>
+                            <p>选择赛马下注，观看随机事件实时改变赛程</p>
+                        </div>
+                    </div>
                 </div>
             </div>
         </div>
     </div>
+
+    <section class="horse-racing-container" id="horse-racing-container" hidden aria-label="赛马比赛面板">
+        <header class="horse-racing-header">
+            <div class="horse-racing-title">
+                <span class="horse-racing-flag">🏁</span>
+                <div>
+                    <strong>赛马竞技场</strong>
+                    <span id="horse-round-id">等待赛程</span>
+                </div>
+            </div>
+            <div class="horse-racing-window-controls">
+                <button type="button" id="horse-fullscreen" title="切换全屏" aria-label="切换赛马面板全屏">
+                    <i class="fa fa-expand" aria-hidden="true"></i>
+                </button>
+                <button type="button" id="horse-close" title="收起赛马面板" aria-label="收起赛马面板">
+                    <i class="fa fa-times" aria-hidden="true"></i>
+                </button>
+            </div>
+        </header>
+        <div class="horse-racing-body">
+            <div class="horse-race-summary">
+                <div><span>阶段</span><strong id="horse-phase">等待中</strong></div>
+                <div><span>倒计时</span><strong id="horse-countdown">--</strong></div>
+                <div><span>总奖池</span><strong id="horse-pot">0</strong></div>
+            </div>
+            <div class="horse-fairness" title="赛前公布承诺，赛后公开随机种子">
+                <i class="fa fa-shield" aria-hidden="true"></i>
+                <span>随机承诺</span>
+                <code id="horse-commitment">等待服务器</code>
+            </div>
+            <div class="horse-tracks" id="horse-tracks" aria-live="polite"></div>
+            <div class="horse-event-strip" id="horse-event-strip">
+                <i class="fa fa-bolt" aria-hidden="true"></i>
+                <span>等待比赛开始</span>
+            </div>
+            <form class="horse-bet-controls" id="horse-bet-form">
+                <label for="horse-select">赛马</label>
+                <select id="horse-select" aria-label="选择赛马"></select>
+                <label for="horse-bet-amount">积分</label>
+                <input id="horse-bet-amount" type="number" inputmode="numeric" min="10" step="10" value="100" aria-label="下注积分">
+                <button type="submit" id="horse-bet-button">
+                    <i class="fa fa-ticket" aria-hidden="true"></i>
+                    <span>下注</span>
+                </button>
+            </form>
+            <div class="horse-payouts" id="horse-payouts" hidden></div>
+        </div>
+    </section>
+    <button class="horse-racing-launcher" id="horse-racing-launcher" type="button" hidden title="展开赛马面板" aria-label="展开赛马面板">
+        <i class="fa fa-flag-checkered" aria-hidden="true"></i>
+    </button>
     
     <!-- Circular Seat Layout -->
     <div class="circular-layout-container" id="circular-layout-container" style="display: none;">
@@ -230,7 +289,7 @@
     <script type="text/javascript" src="js/panel.js?v=20260822-resume-input"></script>
     <script type="text/javascript" src="js/modern-panel.js?v=20250712-1531"></script>
     
-    <script type="text/javascript" src="js/wsClient.js?v=20260825-bet-actions"></script>
+    <script type="text/javascript" src="js/wsClient.js?v=20260826-horse-racing"></script>
     <script type="text/javascript" src="js/imClient.js?v=20250710-1334"></script>
     <script>
         // 创建一个空的 defaultSite 对象，避免依赖错误
@@ -245,7 +304,8 @@
             window.ClientEventCodes = window.ClientEventCode || {};
         }
     </script>
-    <script type="text/javascript" src="js/modern-terminal.js?v=20260825-zhajinhua"></script>
+    <script type="text/javascript" src="js/modern-terminal.js?v=20260826-horse-racing"></script>
     <script type="text/javascript" src="js/circular-layout.js?v=20260825-bet-actions"></script>
+    <script type="text/javascript" src="js/horse-racing.js?v=20260826-horse-racing"></script>
 </body>
 </html>

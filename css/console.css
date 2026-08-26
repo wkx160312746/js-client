@@ -28,12 +28,13 @@
 
 .game-rules {
     color: #222;
-    line-height: 1.7;
-    padding: 4px 0 8px;
+    line-height: 1.5;
+    padding: 2px 0 5px;
 }
 
 .game-rule {
-    padding: 10px 0;
+    min-width: 0;
+    padding: 6px 0;
     border-bottom: 1px solid #e1e4e8;
 }
 
@@ -42,14 +43,15 @@
 }
 
 .game-rule h3 {
-    margin: 0 0 4px;
+    margin: 0 0 2px;
     color: #1f5f9f;
-    font-size: 14px;
+    font-size: 13px;
 }
 
 .game-rule p {
-    margin: 2px 0;
-    font-size: 13px;
+    margin: 1px 0;
+    font-size: 12px;
+    overflow-wrap: anywhere;
 }
 
 #console .tools {

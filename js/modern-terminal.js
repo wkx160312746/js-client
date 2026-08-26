@@ -197,7 +197,7 @@
     }
 
     // Check for game commands (poker actions)
-    const gameCommands = ['call', 'raise', 'fold', 'check', 'allin', 'look', 'compare'];
+    const gameCommands = ['call', 'raise', 'fold', 'check', 'allin', 'look', 'compare', 'bet'];
     if (gameCommands.includes(command)) {
       // Send game command directly to server
       if (terminalState.wsClient.sendMsg(input)) {
@@ -646,6 +646,7 @@
         const maxPlayersByType = {
           '德州扑克': 10,
           '炸金花': 6,
+          '赛马': 10,
           '骗子酒馆': 4,
           '谁是卧底': 6
         };
@@ -721,7 +722,8 @@
       'mahjong': { name: '麻将', number: '6' },
       'liar': { name: '骗子酒馆', number: '7' },
       'undercover': { name: '谁是卧底', number: '9' },
-      'zhajinhua': { name: '炸金花', number: '10' }
+      'zhajinhua': { name: '炸金花', number: '10' },
+      'horse-racing': { name: '赛马', number: '11' }
     };
 
     const selectedGame = gameTypeMap[gameType];
@@ -764,6 +766,8 @@
       '结算回合',
       '请选择操作',
       '请选择炸金花操作',
+      '赛马开始接受下注',
+      '比赛结束！',
       '请房主',
       '游戏开始！',
       'Your hand:',
