@@ -16,22 +16,61 @@
 
     var prefix = '<div id="prefix" style="overflow:hidden;width:100%"><i class="fa fa-angle-right" aria-hidden="true" style="padding-right:5px;color:#2162ac"></i>';
 
-    Panel.prototype.append = function(str) {
-        var split = str.split("\n");
-        var html = split.join("</br>") + "</br>";
+    function decodeHtml(text) {
+        var textarea = document.createElement('textarea');
+        textarea.innerHTML = text;
+        return textarea.value;
+    }
 
-        this.contentDiv.innerHTML += html;
+    function stripHtml(text) {
+        var div = document.createElement('div');
+        div.innerHTML = text;
+        return div.textContent || div.innerText || '';
+    }
+
+    function isHorseRaceTrackLine(line) {
+        return /^\s*(?:>>\s*)?\d+号\s+.+?：.*🏇.*🏁\s+\d+%/.test(line);
+    }
+
+    Panel.prototype.renderHorseRaceStatus = function(str) {
+        var text = decodeHtml(stripHtml(str));
+        var lines = text.split("\n").map(function(line) {
+            return line.trim();
+        }).filter(Boolean);
+        if (!lines.some(isHorseRaceTrackLine)) return false;
+
+        var normalizedLines = lines.map(function(line) {
+            return line.replace(/^>>\s*/, '');
+        });
+        if (!this.horseRaceStatusDiv || !this.contentDiv.contains(this.horseRaceStatusDiv)) {
+            this.horseRaceStatusDiv = document.createElement('div');
+            this.horseRaceStatusDiv.className = 'horse-race-status';
+        }
+        this.horseRaceStatusDiv.textContent = normalizedLines.join("\n");
+        this.contentDiv.appendChild(this.horseRaceStatusDiv);
+        this.contentDiv.scrollTop = this.contentDiv.scrollHeight;
+        return true;
+    };
+
+    Panel.prototype.append = function(str) {
+        if (this.renderHorseRaceStatus(str)) return;
+
+        var split = str.split("\n");
+        var html = split.join("<br>") + "<br>";
+
+        this.contentDiv.insertAdjacentHTML('beforeend', html);
         this.contentDiv.scrollTop = this.contentDiv.scrollHeight;
     };
 
     Panel.prototype.clear = function(str) {
         this.contentDiv.innerHTML = '';
+        this.horseRaceStatusDiv = null;
         this.contentDiv.scrollTop = this.contentDiv.scrollHeight;
     };
 
     Panel.prototype.help = function(str) {
         var html = ''
-        this.contentDiv.innerHTML += html;
+        this.contentDiv.insertAdjacentHTML('beforeend', html);
         this.contentDiv.scrollTop = this.contentDiv.scrollHeight;
     };
 

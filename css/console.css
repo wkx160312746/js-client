@@ -54,6 +54,20 @@
     overflow-wrap: anywhere;
 }
 
+.horse-race-status {
+    margin: 8px 0;
+    padding: 8px 10px;
+    border: 1px solid #d8dbe2;
+    border-left: 3px solid #2877d2;
+    border-radius: 4px;
+    background: #f8fafc;
+    color: #111;
+    font-family: Consolas, "SFMono-Regular", monospace;
+    font-size: 13px;
+    line-height: 1.5;
+    white-space: pre-wrap;
+}
+
 #console .tools {
     width: 100%;
     min-height: 27px;
