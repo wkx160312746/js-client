@@ -132,7 +132,7 @@
 
     async verifyFairness(data) {
       if (!window.crypto || !window.crypto.subtle) {
-        this.commitment.textContent = '已公开种子 ' + data.seed;
+        this.commitment.textContent = '随机种子已公开';
         this.commitment.title = data.seed;
         return;
       }
@@ -140,7 +140,7 @@
       const digest = await window.crypto.subtle.digest('SHA-256', input);
       const actual = Array.from(new Uint8Array(digest), (value) => value.toString(16).padStart(2, '0')).join('');
       const verified = actual === data.commitment;
-      this.commitment.textContent = `${verified ? '验证通过' : '验证失败'} · ${data.seed}`;
+      this.commitment.textContent = verified ? '随机已验证' : '随机验证失败';
       this.commitment.title = `公开种子：${data.seed}`;
     }
 
